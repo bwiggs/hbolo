@@ -7,13 +7,14 @@
 		html, body { margin: 0; background-color: #333; }
 		h1 { text-align: center; color: #fff; }
 		#container { margin: 0 auto; width: 800px;}
-		canvas { margin: 0; width: 800px; height: 600px; background: #000; }
+		canvas { margin: 0; background: #000; }
 	</style>
+	<script type="text/javascript" src="hbolo.js"></script>
 </head>
-<body id="index" onload="">
+<body id="index" onload="hbolo.init()">
 	<h1>hBolo!</h1>
 	<div id="container">
-		<canvas></canvas>
+		<canvas id="canvas" width="640" height="480"></canvas>
 	</div>
 </body>
 </html>
