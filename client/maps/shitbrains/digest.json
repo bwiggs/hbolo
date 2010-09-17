@@ -1,0 +1,35 @@
+{
+	"author": {
+		"name": "Brian Wigginton",
+		"email": "brianwigginton@gmail.com"
+	},
+	"map": {
+		"name": "Shit Brains",
+		"website": "http://www.bwigg.com/hbolo/shitbrains/",
+		"version": 0.1,
+		"tile_size": 16,
+		"tile_mappings": {
+			"s": "0,0",
+			"g": "0,16",
+			"b": "16,0",
+			"w": "16,16"
+		},
+		"layout": [
+			"wwwwwwwwwwwwwwwwwwss",
+			"wwwwwwwwwwwwwwssssgg",
+			"wwwwwwwwwwsssssggggg",
+			"wwwwwwwwwssssggggggg",
+			"wwwwwwwssssggggggggg",
+			"wwwwssssgggggggggggb",
+			"wwssssssggggggggggbb",
+			"wwsssgggggggggggbbbb",
+			"wwsssggggggggggbbbbb",
+			"wwsssgggggggggbbbbbb",
+			"wwsssggggggggbbbbbbb",
+			"wwsssgggggggbbbbbbbb",
+			"wwsssggggggbbbbbbbbb",
+			"wwsssgggggbbbbbbbbbb",
+			"wwsssggggbbbbbbbbbbb"
+		]
+	}
+}
