@@ -1,23 +1,40 @@
 var hbolo = hbolo || {};
 
+UPS = 33;
+
 hbolo = function() {
 
-	var canvas = document.getElementById("canvas").getContext('2d');
+	var ctx = document.getElementById("canvas").getContext('2d');
 	var input = new hbolo.InputManager();	
 	var map = new hbolo.MappingSystem('shitbrains');
+	var paused = false;
+	var player = new hbolo.Sprite({type:"tank"});
+
+	var gameObjects = new Array();
+	gameObjects.push(player);
 	
 	return {
+		loop: function() {
+			if(! paused) {
+				this.update();
+				this.draw();
+			}
+		},
 		update: function() {
 			if(input.getKeyStates.quit) {
 				this.end();
+				return;
 			}
-		},
-		loop: function() {
-			this.update();
-			this.draw();
+			
+			player.update(input);
+			
 		},
 		draw: function() {
-			map.draw(canvas);
+			ctx.canvas.width = ctx.canvas.width;
+			map.draw(ctx);
+			for(i in gameObjects) {
+				gameObjects[i].draw(ctx);
+			}
 		},
 		end: function() {
 			clearInterval(GameLoop);
@@ -25,4 +42,4 @@ hbolo = function() {
 	};
 	
 };
-var GameLoop = setInterval("hbolo.loop()", 33);
+var GameLoop = setInterval("hbolo.loop()", UPS);

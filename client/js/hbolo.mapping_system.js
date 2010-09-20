@@ -25,8 +25,6 @@ hbolo.MappingSystem = function(mapName) {
 	return {
 		draw: function(canvas) {
 
-			canvas.width = canvas.width;
-
 			// loop through each data row
 			for(y in digest.map.layout) {
 
