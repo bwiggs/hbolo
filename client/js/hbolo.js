@@ -6,7 +6,8 @@ hbolo = function() {
 
 	var ctx = document.getElementById("canvas").getContext('2d');
 	var input = new hbolo.InputManager();	
-	var map = new hbolo.MappingSystem('shitbrains');
+	var map = new hbolo.MappingSystem(ctx);
+	map.load('shitbrains');
 	var paused = false;
 	var player = new hbolo.Sprite({type:"tank"});
 
@@ -31,7 +32,7 @@ hbolo = function() {
 		},
 		draw: function() {
 			ctx.canvas.width = ctx.canvas.width;
-			map.draw(ctx);
+			map.draw();
 			for(i in gameObjects) {
 				gameObjects[i].draw(ctx);
 			}
