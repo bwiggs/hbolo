@@ -50,8 +50,10 @@ hbolo = function() {
 			gameObjects.push(object);
 		},
 		removeGameObject: function(object) {
-			var idx = gameObjects.indexOf(object)
-			if(idx != -1) gameObjects.splice(idx);
+			var idx = gameObjects.indexOf(object);
+			if(idx != -1) {
+				gameObjects.splice(idx, 1);
+			}
 		}
 	};
 	

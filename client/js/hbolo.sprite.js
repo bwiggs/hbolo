@@ -62,7 +62,7 @@ hbolo.PlayerSprite = function(data) {
 			
 			if(input.getKeyStates.fire) {
 				if(weaponCooldown == 0) {
-					weaponCooldown = 1;
+					weaponCooldown = 0;
 					game.addGameObject(new hbolo.FlameThrowerSprite({
 						angle:currentAngle,
 						posX: posX,
@@ -123,21 +123,23 @@ hbolo.FlameThrowerSprite = function(data) {
 			angle = data.angle,
 			posX = data.posX,
 			posY = data.posY,
-			lifeTime = 15,
+			lifeTime = 18,
+			currentLife = 0,
 			radius = 2;
 
 	return {
 		update: function(input) {
 			posX += Math.sin(deg2rad(angle)) * velocity;
 			posY -= Math.cos(deg2rad(angle)) * velocity;
-			lifeTime--;
-			if(lifeTime <= 0) game.removeGameObject(this); 
+			currentLife++;
+			if(currentLife >= lifeTime) game.removeGameObject(this); 
 		},
 		draw: function(ctx) {
-			radius++;
+			radius+=.5;
 			ctx.beginPath();
-			ctx.fillStyle = "#f00";
-			ctx.arc(posX+8, posY, radius, 0, Math.PI*2, true); 
+			ctx.fillStyle = "rgba(255, "+Math.floor(Math.random(92)*92)+", 0, " + (1 - currentLife/lifeTime) + ")";
+			// all this randomization stuff just makes the flame wobble...
+			ctx.arc(posX+8+(Math.random(Math.pow(2, 2))*(Math.pow(2, 2))-(Math.pow(2, 2))), posY, radius, 0, Math.PI*2, true); 
 			ctx.closePath();
 			ctx.fill();
 		}
@@ -158,6 +160,7 @@ hbolo.PillBoxSprite = function(data) {
 		},
 		draw: function(ctx) {
 			// TODO: add a rotating turrets
+			canvas2d.globalCompositeOperation = "lighter";
 			ctx.beginPath();
 			ctx.fillStyle = "#ccc";
 			ctx.arc(posX, posY, radius, 0, Math.PI*2, true); 
