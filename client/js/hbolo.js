@@ -54,8 +54,10 @@ hbolo = function() {
 			if(idx != -1) {
 				gameObjects.splice(idx, 1);
 			}
+		},
+		start: function() {
+			this.GameLoop = setInterval("game.loop()", UPS);
 		}
 	};
 	
 };
-var GameLoop = setInterval("game.loop()", UPS);

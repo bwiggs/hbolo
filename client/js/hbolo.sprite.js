@@ -24,6 +24,11 @@ hbolo.PlayerSprite = function(data) {
 	return {
 		update: function(input) {
 
+			if(input.getKeyStates.reset) {
+				posX = undefined;
+				posY = undefined;
+			}
+
 			// UPDATE MOVEMENT VELOCITIES
 			// moving forward
 			if(velocity > 0) {
@@ -77,7 +82,7 @@ hbolo.PlayerSprite = function(data) {
 			if(!ctx) throw "Must pass the drawing context";
 			if(posX === undefined) posX = ctx.canvas.width/2;
 			if(posY === undefined) posY = ctx.canvas.height/2;
-			
+
 			// crazy vector math stuff going on here
 			posX += Math.sin(deg2rad(currentAngle)) * velocity;
 			posY -= Math.cos(deg2rad(currentAngle)) * velocity;

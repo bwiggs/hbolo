@@ -8,7 +8,8 @@ hbolo.InputManager = function() {
 		left: false,
 		right: false,
 		quit: false,
-		fire: false
+		fire: false,
+		reset: false
 	};
 	
 	document.onkeypress = function(e) {
@@ -37,6 +38,11 @@ hbolo.InputManager = function() {
 			// fire weapon
 			case 'U+0020':
 				keyStates['fire'] = true;
+				break;
+
+			// reset game
+			case 'U+0052':
+				keyStates['reset'] = true;
 				break;
 
 			// quit game
@@ -75,6 +81,11 @@ hbolo.InputManager = function() {
 			// fire weapon
 			case 'U+0020':
 				keyStates['fire'] = false;
+				break;
+
+			// reset game
+			case 'U+0052':
+				keyStates['reset'] = false;
 				break;
 		}
 	};

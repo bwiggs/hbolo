@@ -43,6 +43,7 @@ hbolo.MappingSystem = function(ctx) {
 					// save an encoded version of the image to use during the game
 					map = new Image();
 					map.src = ctx.canvas.toDataURL();
+					game.start();
 				},
 				failure: function() {
 					alert("Couldn't load the map digest\n" + path);
