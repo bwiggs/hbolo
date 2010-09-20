@@ -9,10 +9,9 @@ hbolo = function() {
 	var map = new hbolo.MappingSystem(ctx);
 	map.load('shitbrains');
 	var paused = false;
-	var player = new hbolo.Sprite({type:"tank"});
-
+	var player = new hbolo.PlayerSprite({type:"tank"});
 	var gameObjects = new Array();
-	gameObjects.push(player);
+	//gameObjects.push(new hbolo.PillBoxSprite({posX:200, posY:200}));
 	
 	return {
 		loop: function() {
@@ -28,19 +27,33 @@ hbolo = function() {
 			}
 			
 			player.update(input);
+
+			for(i in gameObjects) {
+				gameObjects[i].update();
+			}
 			
 		},
 		draw: function() {
+			// reset the canvas
 			ctx.canvas.width = ctx.canvas.width;
-			map.draw();
+
+			map.draw(ctx);
+			player.draw(ctx);
 			for(i in gameObjects) {
 				gameObjects[i].draw(ctx);
 			}
 		},
 		end: function() {
 			clearInterval(GameLoop);
+		},
+		addGameObject: function(object) {
+			gameObjects.push(object);
+		},
+		removeGameObject: function(object) {
+			var idx = gameObjects.indexOf(object)
+			if(idx != -1) gameObjects.splice(idx);
 		}
 	};
 	
 };
-var GameLoop = setInterval("hbolo.loop()", UPS);
+var GameLoop = setInterval("game.loop()", UPS);

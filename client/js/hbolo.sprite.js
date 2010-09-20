@@ -1,14 +1,15 @@
 var hbolo = hbolo || {};
 
-hbolo.Sprite = function(data) {
+hbolo.PlayerSprite = function(data) {
 
 	var image = new Image(),
 			velocity = 0.0,
 			acceleration = 0.05,
-			deceleration = 0.03,
+			deceleration = 0.08,
 			maxSpeed = 1.5,
-			rotation = 0,
-			rotationSpeed = 4, // this is in degrees
+			currentAngle = 0,
+			rotationSpeed = 4, // how fast we rotate
+			weaponCooldown = 10,
 			posX,
 			posY;
 
@@ -47,10 +48,27 @@ hbolo.Sprite = function(data) {
 			}
 			
 			if(input.getKeyStates.left) {
-				rotation -= rotationSpeed;
+				currentAngle -= rotationSpeed;
 			}
 			if(input.getKeyStates.right) {
-				rotation += rotationSpeed;
+				currentAngle += rotationSpeed;
+			}
+			
+			
+			// cool down our weapons
+			if(weaponCooldown > 0) {
+				weaponCooldown--;
+			}
+			
+			if(input.getKeyStates.fire) {
+				if(weaponCooldown == 0) {
+					weaponCooldown = 1;
+					game.addGameObject(new hbolo.FlameThrowerSprite({
+						angle:currentAngle,
+						posX: posX,
+						posY: posY
+					}));
+				}
 			}
 
 		},
@@ -61,15 +79,90 @@ hbolo.Sprite = function(data) {
 			if(posY === undefined) posY = ctx.canvas.height/2;
 			
 			// crazy vector math stuff going on here
-			posX += Math.sin(deg2rad(rotation)) * velocity;
-			posY -= Math.cos(deg2rad(rotation)) * velocity;
+			posX += Math.sin(deg2rad(currentAngle)) * velocity;
+			posY -= Math.cos(deg2rad(currentAngle)) * velocity;
 			
 			ctx.save();
 			ctx.translate(posX + image.width/2, posY + image.height/2);
-			ctx.rotate(deg2rad(rotation));
+			ctx.rotate(deg2rad(currentAngle));
 			ctx.drawImage(image, -(image.width/2),-(image.height/2));
 			ctx.restore();
 		}
 	};
 	
+};
+
+hbolo.MachineGunSprite = function(data) {
+
+	var velocity = 5,
+			angle = data.angle,
+			posX = data.posX,
+			posY = data.posY,
+			lifeTime = 30;
+
+	return {
+		update: function(input) {
+			posX += Math.sin(deg2rad(angle)) * velocity;
+			posY -= Math.cos(deg2rad(angle)) * velocity;
+			lifeTime--;
+			if(lifeTime <= 0) game.removeGameObject(this); 
+		},
+		draw: function(ctx) {
+			ctx.beginPath();
+			ctx.fillStyle = "#fff";
+			ctx.arc(posX+8, posY, 2, 0, Math.PI*2, true); 
+			ctx.closePath();
+			ctx.fill();
+		}
+	};
+};
+
+hbolo.FlameThrowerSprite = function(data) {
+
+	var velocity = 6,
+			angle = data.angle,
+			posX = data.posX,
+			posY = data.posY,
+			lifeTime = 15,
+			radius = 2;
+
+	return {
+		update: function(input) {
+			posX += Math.sin(deg2rad(angle)) * velocity;
+			posY -= Math.cos(deg2rad(angle)) * velocity;
+			lifeTime--;
+			if(lifeTime <= 0) game.removeGameObject(this); 
+		},
+		draw: function(ctx) {
+			radius++;
+			ctx.beginPath();
+			ctx.fillStyle = "#f00";
+			ctx.arc(posX+8, posY, radius, 0, Math.PI*2, true); 
+			ctx.closePath();
+			ctx.fill();
+		}
+	};
+};
+
+hbolo.PillBoxSprite = function(data) {
+
+	var angle = 0,
+			radius = 10,
+			posX = data.posX,
+			posY = data.posY,
+			health = 100;
+
+	return {
+		update: function(input) {
+			if(health <= 0) game.removeGameObject(this); 
+		},
+		draw: function(ctx) {
+			// TODO: add a rotating turrets
+			ctx.beginPath();
+			ctx.fillStyle = "#ccc";
+			ctx.arc(posX, posY, radius, 0, Math.PI*2, true); 
+			ctx.closePath();
+			ctx.fill();
+		}
+	};
 };
