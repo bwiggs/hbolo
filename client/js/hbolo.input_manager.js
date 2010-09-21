@@ -52,7 +52,7 @@ hbolo.InputManager = function() {
 				break;
 	
 			default:
-				console.log(e.keyCode);
+				// console.log(e.keyCode);
 		}
 	};
 	
