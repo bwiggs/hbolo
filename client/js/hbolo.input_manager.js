@@ -12,79 +12,81 @@ hbolo.InputManager = function() {
 		reset: false
 	};
 	
-	document.onkeypress = function(e) {
-		switch(e.keyIdentifier) {
+	document.onkeydown = function(e) {
 
+		switch(e.keyCode) {
+	
 			// forward
-			case 'U+0057':
+			case 87:
 				keyStates['forward'] = true;
 				break;
-
+	
 			// backwards
-			case 'U+0053':
+			case 83:
 				keyStates['reverse'] = true;
 				break;
-
+	
 			// left
-			case 'U+0041':
+			case 65:
 				keyStates["left"] = true;
 				break;
-
+	
 			// right
-			case 'U+0044':
+			case 68:
 				keyStates['right'] = true;
 				break;
-
+	
 			// fire weapon
-			case 'U+0020':
+			case 32:
 				keyStates['fire'] = true;
 				break;
-
+	
 			// reset game
-			case 'U+0052':
+			case 82:
 				keyStates['reset'] = true;
 				break;
-
+	
 			// quit game
-			case 'U+0051':
+			case 81:
 				keyStates['quit'] = true;
 				break;
-
+	
 			default:
-				console.log(e.keyIdentifier);
+				console.log(e.keyCode);
 		}
 	};
 	
 	document.onkeyup = function(e) {
-		switch(e.keyIdentifier) {
+
+		switch(e.keyCode) {
 
 			// forward
-			case 'U+0057':
+			case 87:
 				keyStates['forward'] = false;
 				break;
 
 			// backwards
-			case 'U+0053':
+			case 83:
 				keyStates['reverse'] = false;
 				break;
 
 			// left
-			case 'U+0041':
+			case 65:
 				keyStates['left'] = false;
 				break;
 
 			// right
-			case 'U+0044':
+			case 68:
 				keyStates['right'] = false;
 				break;
 				
 			// fire weapon
-			case 'U+0020':
+			case 32:
 				keyStates['fire'] = false;
 				break;
 
 			// reset game
-			case 'U+0052':
+			case 82:
 				keyStates['reset'] = false;
 				break;
 		}
