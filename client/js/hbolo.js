@@ -2,62 +2,71 @@ var hbolo = hbolo || {};
 
 UPS = 33;
 
-hbolo = function() {
+game = function() {
 
-	var ctx = document.getElementById("canvas").getContext('2d');
-	var input = new hbolo.InputManager();	
-	var map = new hbolo.MappingSystem(ctx);
-	map.load('shitbrains');
-	var paused = false;
-	var player = new hbolo.PlayerSprite({type:"tank"});
-	var gameObjects = new Array();
-	//gameObjects.push(new hbolo.PillBoxSprite({posX:200, posY:200}));
-	
-	return {
+	var self = {
+		ctx:undefined,
+		input:undefined,
+		map:undefined,
+		paused:undefined,
+		player:undefined,
+		gameObjects:undefined
+	};
+
+	var pub = {
+		init: function() {
+			self.ctx = document.getElementById("canvas").getContext('2d');
+			self.input = new hbolo.InputManager();	
+			self.map = new hbolo.MappingSystem(self.ctx);
+			self.map.load('shitbrains');
+			self.paused = false;
+			self.player = new hbolo.PlayerSprite({type:"tank"});
+			self.gameObjects = new Array();
+		},
 		loop: function() {
-			if(! paused) {
+			if(! self.paused) {
 				this.update();
 				this.draw();
 			}
 		},
 		update: function() {
-			if(input.getKeyStates.quit) {
+			if(self.input.getKeyStates.quit) {
 				this.end();
 				return;
 			}
-			
-			player.update(input);
+			self.player.update(self.input);
 
-			for(i in gameObjects) {
-				gameObjects[i].update();
+			for(var i in self.gameObjects) {
+				self.gameObjects[i].update();
 			}
 			
 		},
 		draw: function() {
 			// reset the canvas
-			ctx.canvas.width = ctx.canvas.width;
+			self.ctx.canvas.width = self.ctx.canvas.width;
 
-			map.draw(ctx);
-			player.draw(ctx);
-			for(i in gameObjects) {
-				gameObjects[i].draw(ctx);
+			self.map.draw(self.ctx);
+			self.player.draw(self.ctx);
+			for(var i in self.gameObjects) {
+				self.gameObjects[i].draw(self.ctx);
 			}
 		},
 		end: function() {
 			clearInterval(GameLoop);
 		},
 		addGameObject: function(object) {
-			gameObjects.push(object);
+			self.gameObjects.push(object);
 		},
 		removeGameObject: function(object) {
-			var idx = gameObjects.indexOf(object);
+			var idx = self.gameObjects.indexOf(object);
 			if(idx != -1) {
-				gameObjects.splice(idx, 1);
+				self.gameObjects.splice(idx, 1);
 			}
 		},
 		start: function() {
-			this.GameLoop = setInterval("game.loop()", UPS);
+			GameLoop = setInterval("game.loop()", UPS);
 		}
 	};
 	
-};
+	return pub;
+}();

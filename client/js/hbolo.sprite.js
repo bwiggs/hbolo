@@ -140,7 +140,7 @@ hbolo.FlameThrowerSprite = function(data) {
 			if(currentLife >= lifeTime) game.removeGameObject(this); 
 		},
 		draw: function(ctx) {
-			radius+=.5;
+			radius+=.6;
 			ctx.beginPath();
 			ctx.fillStyle = "rgba(255, "+Math.floor(Math.random(92)*92)+", 0, " + (1 - currentLife/lifeTime) + ")";
 			// all this randomization stuff just makes the flame wobble...
