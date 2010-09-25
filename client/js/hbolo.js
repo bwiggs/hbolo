@@ -1,4 +1,4 @@
-var UPS = 100;
+var UPS = 33;
 
 var game = (function() {
 	

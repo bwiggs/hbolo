@@ -86,8 +86,8 @@ hbolo.PlayerSprite = function(data) {
 			if(posY === undefined) posY = ctx.canvas.height/2;
 
 			// crazy vector math stuff going on here
-			posX += Math.sin(deg2rad(currentAngle)) * velocity;
-			posY -= Math.cos(deg2rad(currentAngle)) * velocity;
+			posX += Math.sin(Math.deg2rad(currentAngle)) * velocity;
+			posY -= Math.cos(Math.deg2rad(currentAngle)) * velocity;
 			
 			ctx.save();
 
@@ -108,7 +108,7 @@ hbolo.PlayerSprite = function(data) {
 			
 			// draw the tank
 			ctx.translate(posX + image.width/2, posY + image.height/2);
-			ctx.rotate(deg2rad(currentAngle));
+			ctx.rotate(Math.deg2rad(currentAngle));
 			ctx.drawImage(image, -(image.width/2),-(image.height/2));
 
 			// restore the projection
@@ -130,8 +130,8 @@ hbolo.MachineGunSprite = function(data) {
 
 	return {
 		update: function(input) {
-			posX += Math.sin(deg2rad(angle)) * velocity;
-			posY -= Math.cos(deg2rad(angle)) * velocity;
+			posX += Math.sin(Math.deg2rad(angle)) * velocity;
+			posY -= Math.cos(Math.deg2rad(angle)) * velocity;
 			lifeTime--;
 			if(lifeTime <= 0) game.removeGameObject(this); 
 		},
@@ -153,14 +153,15 @@ hbolo.FlameThrowerSprite = function(data) {
 			posY = data.posY,
 			lifeTime = 18,
 			currentLife = 0,
-			radius = 2;
+			radius = 2,
+			damagePoints = .08;
 
 	var pub = {
 		update: function(input) {
-			posX += Math.sin(deg2rad(angle)) * velocity;
-			posY -= Math.cos(deg2rad(angle)) * velocity;
+			posX += Math.sin(Math.deg2rad(angle)) * velocity;
+			posY -= Math.cos(Math.deg2rad(angle)) * velocity;
 			currentLife++;
-			if(currentLife >= lifeTime) game.removeGameObject(this); 
+			if(currentLife >= lifeTime) game.removeGameObject(this);
 		},
 		draw: function(ctx) {
 			radius+=.8;
@@ -171,38 +172,19 @@ hbolo.FlameThrowerSprite = function(data) {
 			ctx.closePath();
 			ctx.fill();
 		},
-		getCollisionBoundary: {
-			r: radius,
-			x: posX,
-			y: posY
+		getDamagePoints: function(){
+			return damagePoints;
+		},
+		getCollisionBoundary: function() {
+			return {
+				r: radius,
+				x: posX,
+				y: posY
+			};
 		}
 	};
 	
 	return pub;
-};
-
-hbolo.PillBoxSprite = function(data) {
-
-	var angle = 0,
-			radius = 10,
-			posX = data.posX,
-			posY = data.posY,
-			health = 100;
-
-	return {
-		update: function(input) {
-			if(health <= 0) game.removeGameObject(this); 
-		},
-		draw: function(ctx) {
-			// TODO: add a rotating turrets
-			canvas2d.globalCompositeOperation = "lighter";
-			ctx.beginPath();
-			ctx.fillStyle = "#ccc";
-			ctx.arc(posX, posY, radius, 0, Math.PI*2, true); 
-			ctx.closePath();
-			ctx.fill();
-		}
-	};
 };
 
 hbolo.EnemySprite = function(data) {
@@ -234,8 +216,9 @@ hbolo.EnemySprite = function(data) {
 			for(var i in game.getGameObjects()) {
 				var object = game.getGameObjects()[i];
 				if(self !== object) {
-					if(Physics.collision(self.getCollisionBoundary,object.getCollisionBoundary)) {
-						console.log('boom@');
+					// check for some sort of collision
+					if(Physics.collision(self.getCollisionBoundary(),object.getCollisionBoundary())) {
+						health -= object.getDamagePoints();
 					}
 				}
 			}
@@ -247,7 +230,9 @@ hbolo.EnemySprite = function(data) {
 			
 			self.checkCollisions(this);
 			
-			if(health <= 0) game.removeGameObject(this);
+			if(health <= 0) {
+				game.removeGameObject(this);
+			}
 
 		},
 		draw: function(ctx) {
@@ -257,8 +242,8 @@ hbolo.EnemySprite = function(data) {
 			if(posY === undefined) posY = ctx.canvas.height/2;
 
 			// crazy vector math stuff going on here
-			posX += Math.sin(deg2rad(currentAngle)) * velocity;
-			posY -= Math.cos(deg2rad(currentAngle)) * velocity;
+			posX += Math.sin(Math.deg2rad(currentAngle)) * velocity;
+			posY -= Math.cos(Math.deg2rad(currentAngle)) * velocity;
 			
 			ctx.save();
 
@@ -279,19 +264,60 @@ hbolo.EnemySprite = function(data) {
 			
 			// draw the tank
 			ctx.translate(posX + image.width/2, posY + image.height/2);
-			ctx.rotate(deg2rad(currentAngle));
+			ctx.rotate(Math.deg2rad(currentAngle));
 			ctx.drawImage(image, -(image.width/2),-(image.height/2));
 
 			// restore the projection
 			ctx.restore();
+			
+			var pointBarWidth = 45,
+					life = (health/100);
+			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth, 7);
+			if(life > .66) {
+				ctx.fillStyle = '#0f0';
+			} else if(life > .33) {
+				ctx.fillStyle = '#ff0';
+			} else {
+				ctx.fillStyle = '#f00';
+			}
+
+			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth*life, 7);
+			
+			
 		},
-		getCollisionBoundary: {
-			r: collisionRadius,
-			x: posX,
-			y: posY
+		getCollisionBoundary: function() {
+			return {
+				r: collisionRadius,
+				x: posX,
+				y: posY
+			};
 		}
 	};
 	
 	return pub;
 	
+};
+
+hbolo.PillBoxSprite = function(data) {
+
+	var angle = 0,
+			radius = 10,
+			posX = data.posX,
+			posY = data.posY,
+			health = 100;
+
+	return {
+		update: function(input) {
+			if(health <= 0) game.removeGameObject(this); 
+		},
+		draw: function(ctx) {
+			// TODO: add a rotating turrets
+			canvas2d.globalCompositeOperation = "lighter";
+			ctx.beginPath();
+			ctx.fillStyle = "#ccc";
+			ctx.arc(posX, posY, radius, 0, Math.PI*2, true); 
+			ctx.closePath();
+			ctx.fill();
+		}
+	};
 };
