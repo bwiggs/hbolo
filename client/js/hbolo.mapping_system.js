@@ -3,8 +3,8 @@ var hbolo = hbolo || {};
 hbolo.MappingSystem = (function() {
 	
 	var digest = {},
-			baseX = 0,
-			baseY = 0,
+			viewportX = 0,
+			viewportY = 0,
 			ctx,
 			path = "/maps/",
 			map;
@@ -48,6 +48,12 @@ hbolo.MappingSystem = (function() {
 			map = new Image();
 			map.src = ctx.canvas.toDataURL();
 			map.onLoad = (function() {game.start();})();
+		},
+		checkMapBoundaryCollision: function(x, y) {
+			if(x <= 0 ||
+				 x >= map.width ||
+				 y <=0 ||
+				 y >= map.height) return true;
 		}
 	};
 	
@@ -58,9 +64,10 @@ hbolo.MappingSystem = (function() {
 				self.loadMap(mapName);
 		},
 		draw: function() {
-			ctx.drawImage(map, baseX, baseY);
+			ctx.drawImage(map, viewportX, viewportY);
 		},
 		checkTileCollision: function(x, y) {
+			if(self.checkMapBoundaryCollision(x, y)) return true;
 			var currentTile = digest.map.layout[Math.floor(y/digest.map.tile_size)][Math.floor(x/digest.map.tile_size)];
 			for(var i = 0; i < digest.map.impervious_tiles.length; i++) {
 				if(currentTile == digest.map.impervious_tiles[i]) return true;

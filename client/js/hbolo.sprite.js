@@ -12,6 +12,8 @@ hbolo.PlayerSprite = function(data) {
 			weaponCooldown = 10,
 			posX,
 			posY,
+			newPosX,
+			newPosY,
 			collisionRadius = 12,
 			shieldRadius = 14;
 
@@ -24,13 +26,23 @@ hbolo.PlayerSprite = function(data) {
 	}
 	
 	var self = {
-		checkCollisions: function(self){
-			for(var i in game.getGameObjects()) {
-				var object = game.getGameObjects()[i];
+		getCollisions: function(self){
+			for(var i in game.getGameObjects().imperviousSprites) {
+				var object = game.getGameObjects().imperviousSprites[i];
 				if(self !== object) {
 					// check for some sort of collision
-					if(Physics.collision(self.getCollisionBoundary(),object.getCollisionBoundary())) {
-						health -= object.getDamagePoints();
+					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
+						return true;
+					}
+				}
+			}
+		},
+		getDamage: function(self){
+			for(var i in game.getGameObjects()) {
+				var object = game.getGameObjects().damagingSprites[i];
+				if(self !== object) {
+					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
+						health -= object.getDamage();
 					}
 				}
 			}
@@ -78,19 +90,20 @@ hbolo.PlayerSprite = function(data) {
 				currentAngle += rotationSpeed;
 			}
 			
-			// update the users x position
-			var newPosX = posX + Math.sin(Math.deg2rad(currentAngle)) * velocity;
-			if(!game.mapCollision(newPosX, posY)) {
-				posX = newPosX;
-			}
-			// update the users y position
-			var newPosY = posY - Math.cos(Math.deg2rad(currentAngle)) * velocity;
-			if(!game.mapCollision(posX, newPosY)) {
-				posY = newPosY;
+			// attempt to move
+			newPosX = posX + Math.sin(Math.deg2rad(currentAngle)) * velocity;
+			newPosY = posY - Math.cos(Math.deg2rad(currentAngle)) * velocity;
+			if(!self.getCollisions()) {
+				if(!game.mapCollision(newPosX, posY)) {
+					posX = newPosX;
+				}
+				// update the users y position
+				if(!game.mapCollision(posX, newPosY)) {
+					posY = newPosY;
+				}
 			}
 			
-			
-			// cool down our weapons
+			// handle weapons
 			if(weaponCooldown > 0) {
 				weaponCooldown--;
 			}
@@ -98,13 +111,16 @@ hbolo.PlayerSprite = function(data) {
 			if(input.getKeyStates.fire) {
 				if(weaponCooldown == 0) {
 					weaponCooldown = 0;
-					game.addGameObject(new hbolo.FlameThrowerSprite({
+					game.addDamagingSprite(new hbolo.FlameThrowerSprite({
 						angle:currentAngle,
 						posX: posX,
 						posY: posY
 					}));
 				}
 			}
+			
+			// handle damage
+			
 
 		},
 		draw: function(ctx) {
@@ -139,8 +155,8 @@ hbolo.PlayerSprite = function(data) {
 		getCollisionBoundary: function() {
 			return {
 				r: collisionRadius,
-				x: posX,
-				y: posY
+				x: newPosX,
+				y: newPosY
 			};
 		}
 	};
@@ -162,7 +178,7 @@ hbolo.MachineGunSprite = function(data) {
 			posX += Math.sin(Math.deg2rad(angle)) * velocity;
 			posY -= Math.cos(Math.deg2rad(angle)) * velocity;
 			lifeTime--;
-			if(lifeTime <= 0) game.removeGameObject(this); 
+			if(lifeTime <= 0) game.removeDamagingSprite(this); 
 		},
 		draw: function(ctx) {
 			ctx.beginPath();
@@ -183,14 +199,31 @@ hbolo.FlameThrowerSprite = function(data) {
 			lifeTime = 18,
 			currentLife = 0,
 			radius = 2,
-			damagePoints = .08;
+			damagePoints = 1;
+
+	var self = {
+		getCollisions: function(self){
+			for(var i in game.getGameObjects().imperviousSprites) {
+				var object = game.getGameObjects().imperviousSprites[i];
+				if(self !== object) {
+					// check for some sort of collision
+					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
+						return true;
+					}
+				}
+			}
+		}
+	};
 
 	var pub = {
 		update: function(input) {
 			posX += Math.sin(Math.deg2rad(angle)) * velocity;
 			posY -= Math.cos(Math.deg2rad(angle)) * velocity;
 			currentLife++;
-			if(currentLife >= lifeTime) game.removeGameObject(this);
+			if(self.getCollisions()) {
+				currentLife = lifeTime-1;
+			}
+			if(currentLife >= lifeTime) game.removeDamagingSprite(this);
 		},
 		draw: function(ctx) {
 			radius+=.8;
@@ -202,7 +235,7 @@ hbolo.FlameThrowerSprite = function(data) {
 			ctx.fill();
 		},
 		getDamagePoints: function(){
-			return damagePoints;
+			return damagePoints/radius;
 		},
 		getCollisionBoundary: function() {
 			return {
@@ -241,12 +274,22 @@ hbolo.EnemySprite = function(data) {
 	}
 
 	var self = {
-		checkCollisions: function(self){
-			for(var i in game.getGameObjects()) {
-				var object = game.getGameObjects()[i];
+		getCollisions: function(self){
+			for(var i in game.getGameObjects().imperviousSprites) {
+				var object = game.getGameObjects().imperviousSprites[i];
 				if(self !== object) {
 					// check for some sort of collision
-					if(Physics.collision(self.getCollisionBoundary(),object.getCollisionBoundary())) {
+					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
+						return true;
+					}
+				}
+			}
+		},
+		getDamage: function(self){
+			for(var i in game.getGameObjects().damagingSprites) {
+				var object = game.getGameObjects().damagingSprites[i];
+				if(self !== object) {
+					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
 						health -= object.getDamagePoints();
 					}
 				}
@@ -257,10 +300,11 @@ hbolo.EnemySprite = function(data) {
 	var pub = {
 		update: function(input) {
 			
-			self.checkCollisions(this);
+			self.getCollisions(this);
+			self.getDamage();
 			
 			if(health <= 0) {
-				game.removeGameObject(this);
+				game.removeImperviousSprite(this);
 			}
 
 		},

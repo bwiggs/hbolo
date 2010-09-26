@@ -17,8 +17,11 @@ var game = (function() {
 			map.init(ctx, 'maze');
 			paused = false;
 			player = new hbolo.PlayerSprite({type:"tank"});
-			gameObjects = new Array();
-			gameObjects.push(new hbolo.EnemySprite({type:"tank"}));
+			gameObjects = {
+				imperviousSprites: [],
+				damagingSprites: []
+			};
+			gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
 		},
 		loop: function() {
 			if(! paused) {
@@ -34,7 +37,9 @@ var game = (function() {
 			player.update(input);
 
 			for(var i in gameObjects) {
-				gameObjects[i].update();
+				for(var j in gameObjects[i]) {
+					gameObjects[i][j].update();
+				}
 			}
 			
 		},
@@ -45,19 +50,30 @@ var game = (function() {
 			map.draw(ctx);
 			player.draw(ctx);
 			for(var i in gameObjects) {
-				gameObjects[i].draw(ctx);
+				for(var j in gameObjects[i]) {
+					gameObjects[i][j].draw(ctx);
+				}
 			}
 		},
 		end: function() {
 			clearInterval(GameLoop);
 		},
-		addGameObject: function(object) {
-			gameObjects.push(object);
+		addDamagingSprite: function(object) {
+			gameObjects.damagingSprites.push(object);
 		},
-		removeGameObject: function(object) {
-			var idx = gameObjects.indexOf(object);
+		removeDamagingSprite: function(object) {
+			var idx = gameObjects.damagingSprites.indexOf(object);
 			if(idx != -1) {
-				gameObjects.splice(idx, 1);
+				gameObjects.damagingSprites.splice(idx, 1);
+			}
+		},
+		addImperviousSprite: function(object) {
+			gameObjects.damagingSprites.push(object);
+		},
+		removeImperviousSprite: function(object) {
+			var idx = gameObjects.imperviousSprites.indexOf(object);
+			if(idx != -1) {
+				gameObjects.imperviousSprites.splice(idx, 1);
 			}
 		},
 		getGameObjects: function() {
