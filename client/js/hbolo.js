@@ -4,17 +4,17 @@ var game = (function() {
 	
 	var ctx,
 			input,
-			map,
 			paused,
 			player,
-			gameObjects;
+			gameObjects,
+			map;
 
 	var pub = {
 		init: function() {
 			ctx = document.getElementById("canvas").getContext('2d');
 			input = new hbolo.InputManager();	
 			map = hbolo.MappingSystem,
-			map.init(ctx, 'shitbrains');
+			map.init(ctx, 'maze');
 			paused = false;
 			player = new hbolo.PlayerSprite({type:"tank"});
 			gameObjects = new Array();
@@ -65,8 +65,12 @@ var game = (function() {
 		},
 		start: function() {
 			GameLoop = setInterval("game.loop()", UPS);
+		},
+		mapCollision: function(x, y){
+			return map.checkTileCollision(x, y);
 		}
 	};
 	
 	return pub;
+	
 })();

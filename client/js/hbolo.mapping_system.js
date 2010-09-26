@@ -59,6 +59,13 @@ hbolo.MappingSystem = (function() {
 		},
 		draw: function() {
 			ctx.drawImage(map, baseX, baseY);
+		},
+		checkTileCollision: function(x, y) {
+			var currentTile = digest.map.layout[Math.floor(y/digest.map.tile_size)][Math.floor(x/digest.map.tile_size)];
+			for(var i = 0; i < digest.map.impervious_tiles.length; i++) {
+				if(currentTile == digest.map.impervious_tiles[i]) return true;
+			}
+			return false;
 		}
 	};
 	

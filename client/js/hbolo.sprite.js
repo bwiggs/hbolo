@@ -23,13 +23,30 @@ hbolo.PlayerSprite = function(data) {
 			throw "Sprite(): Must provide an asset type.";
 	}
 	
-	return {
+	var self = {
+		checkCollisions: function(self){
+			for(var i in game.getGameObjects()) {
+				var object = game.getGameObjects()[i];
+				if(self !== object) {
+					// check for some sort of collision
+					if(Physics.collision(self.getCollisionBoundary(),object.getCollisionBoundary())) {
+						health -= object.getDamagePoints();
+					}
+				}
+			}
+		}
+	};
+	
+	var pub = {
 		update: function(input) {
 
 			if(input.getKeyStates.reset) {
 				posX = undefined;
 				posY = undefined;
 			}
+			
+			if(posX === undefined) posX = 300;
+			if(posY === undefined) posY = 300;
 
 			// UPDATE MOVEMENT VELOCITIES
 			// moving forward
@@ -61,6 +78,17 @@ hbolo.PlayerSprite = function(data) {
 				currentAngle += rotationSpeed;
 			}
 			
+			// update the users x position
+			var newPosX = posX + Math.sin(Math.deg2rad(currentAngle)) * velocity;
+			if(!game.mapCollision(newPosX, posY)) {
+				posX = newPosX;
+			}
+			// update the users y position
+			var newPosY = posY - Math.cos(Math.deg2rad(currentAngle)) * velocity;
+			if(!game.mapCollision(posX, newPosY)) {
+				posY = newPosY;
+			}
+			
 			
 			// cool down our weapons
 			if(weaponCooldown > 0) {
@@ -82,12 +110,6 @@ hbolo.PlayerSprite = function(data) {
 		draw: function(ctx) {
 
 			if(!ctx) throw "Must pass the drawing context";
-			if(posX === undefined) posX = ctx.canvas.width/2;
-			if(posY === undefined) posY = ctx.canvas.height/2;
-
-			// crazy vector math stuff going on here
-			posX += Math.sin(Math.deg2rad(currentAngle)) * velocity;
-			posY -= Math.cos(Math.deg2rad(currentAngle)) * velocity;
 			
 			ctx.save();
 
@@ -113,10 +135,17 @@ hbolo.PlayerSprite = function(data) {
 
 			// restore the projection
 			ctx.restore();
-			
-			
+		},
+		getCollisionBoundary: function() {
+			return {
+				r: collisionRadius,
+				x: posX,
+				y: posY
+			};
 		}
 	};
+	
+	return pub;
 	
 };
 
