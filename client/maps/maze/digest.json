@@ -1,0 +1,54 @@
+{
+	"author": {
+		"name": "Brian Wigginton",
+		"email": "brianwigginton@gmail.com"
+	},
+	"map": {
+		"name": "Maze!",
+		"website": "http://www.bwigg.com/hbolo/maze/",
+		"version": 0.1,
+		"tile_size": 16,
+		"impervious_tiles": [
+			"b"
+		],
+		"tile_mappings": {
+			"s": "0,0",
+			"g": "0,16",
+			"b": "16,0",
+			"w": "16,16"
+		},
+		"layout": [
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"bbbbbbbbbbbgbbbbbbbbbbbbbbbbggbbbbbbbbbb",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg",
+			"gggggggggggggggggggggggggggggggggggggggg"
+		]
+	}
+}
