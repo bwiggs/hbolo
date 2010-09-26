@@ -165,6 +165,131 @@ hbolo.PlayerSprite = function(data) {
 	
 };
 
+hbolo.EnemySprite = function(data) {
+
+	var image = new Image(),
+			velocity = 0.0,
+			acceleration = 0.05,
+			deceleration = 0.08,
+			maxSpeed = 1.5,
+			currentAngle = 0,
+			rotationSpeed = 4, // how fast we rotate
+			weaponCooldown = 10,
+			posX = 200,
+			posY = 200,
+			health = 100,
+			collisionRadius = 12,
+			shieldRadius = 14;
+
+	switch(data.type) {
+		case "tank":
+			image.src = "/tanks/blue.png";
+			break;
+		default:
+			throw "Sprite(): Must provide an asset type.";
+	}
+
+	var self = {
+		getCollisions: function(self){
+			for(var i in game.getGameObjects().imperviousSprites) {
+				var object = game.getGameObjects().imperviousSprites[i];
+				if(self !== object) {
+					// check for some sort of collision
+					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
+						return true;
+					}
+				}
+			}
+		},
+		getDamage: function(self){
+			for(var i in game.getGameObjects().damagingSprites) {
+				var object = game.getGameObjects().damagingSprites[i];
+				if(self !== object) {
+					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
+						health -= object.getDamagePoints();
+					}
+				}
+			}
+		}
+	};
+	
+	var pub = {
+		update: function(input) {
+			
+			self.getCollisions(this);
+			self.getDamage();
+			
+			if(health <= 0) {
+				game.removeImperviousSprite(this);
+			}
+			
+			// CHASE ALGORITHM
+			
+
+		},
+		draw: function(ctx) {
+
+			if(!ctx) throw "Must pass the drawing context";
+			if(posX === undefined) posX = ctx.canvas.width/2;
+			if(posY === undefined) posY = ctx.canvas.height/2;
+
+			// crazy vector math stuff going on here
+			posX += Math.sin(Math.deg2rad(currentAngle)) * velocity;
+			posY -= Math.cos(Math.deg2rad(currentAngle)) * velocity;
+			
+			ctx.save();
+
+			// draw the collision detection ring
+			ctx.beginPath();
+			ctx.strokeStyle = "#fff";
+			ctx.strokeWidth = 2;
+			ctx.arc(posX+collisionRadius/2, posY+collisionRadius/2, collisionRadius, 0, Math.PI*2, true); 
+			ctx.closePath();
+			ctx.stroke();
+			
+			// draw the collision detection ring
+			ctx.beginPath();
+			ctx.strokeStyle = "#0F0";
+			ctx.arc(posX+shieldRadius/2, posY+shieldRadius/2, shieldRadius, 0, Math.PI*2, true); 
+			ctx.closePath();
+			ctx.stroke();
+			
+			// draw the tank
+			ctx.translate(posX + image.width/2, posY + image.height/2);
+			ctx.rotate(Math.deg2rad(currentAngle));
+			ctx.drawImage(image, -(image.width/2),-(image.height/2));
+
+			// restore the projection
+			ctx.restore();
+			
+			var pointBarWidth = 45,
+					life = (health/100);
+			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth, 7);
+			if(life > .66) {
+				ctx.fillStyle = '#0f0';
+			} else if(life > .33) {
+				ctx.fillStyle = '#ff0';
+			} else {
+				ctx.fillStyle = '#f00';
+			}
+
+			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth*life, 7);
+			
+			
+		},
+		getCollisionBoundary: function() {
+			return {
+				r: collisionRadius,
+				x: posX,
+				y: posY
+			};
+		}
+	};
+	
+	return pub;
+	
+};
+
 hbolo.MachineGunSprite = function(data) {
 
 	var velocity = 5,
@@ -247,128 +372,6 @@ hbolo.FlameThrowerSprite = function(data) {
 	};
 	
 	return pub;
-};
-
-hbolo.EnemySprite = function(data) {
-
-	var image = new Image(),
-			velocity = 0.0,
-			acceleration = 0.05,
-			deceleration = 0.08,
-			maxSpeed = 1.5,
-			currentAngle = 0,
-			rotationSpeed = 4, // how fast we rotate
-			weaponCooldown = 10,
-			posX = 200,
-			posY = 200,
-			health = 100,
-			collisionRadius = 12,
-			shieldRadius = 14;
-
-	switch(data.type) {
-		case "tank":
-			image.src = "/tanks/blue.png";
-			break;
-		default:
-			throw "Sprite(): Must provide an asset type.";
-	}
-
-	var self = {
-		getCollisions: function(self){
-			for(var i in game.getGameObjects().imperviousSprites) {
-				var object = game.getGameObjects().imperviousSprites[i];
-				if(self !== object) {
-					// check for some sort of collision
-					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
-						return true;
-					}
-				}
-			}
-		},
-		getDamage: function(self){
-			for(var i in game.getGameObjects().damagingSprites) {
-				var object = game.getGameObjects().damagingSprites[i];
-				if(self !== object) {
-					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
-						health -= object.getDamagePoints();
-					}
-				}
-			}
-		}
-	};
-	
-	var pub = {
-		update: function(input) {
-			
-			self.getCollisions(this);
-			self.getDamage();
-			
-			if(health <= 0) {
-				game.removeImperviousSprite(this);
-			}
-
-		},
-		draw: function(ctx) {
-
-			if(!ctx) throw "Must pass the drawing context";
-			if(posX === undefined) posX = ctx.canvas.width/2;
-			if(posY === undefined) posY = ctx.canvas.height/2;
-
-			// crazy vector math stuff going on here
-			posX += Math.sin(Math.deg2rad(currentAngle)) * velocity;
-			posY -= Math.cos(Math.deg2rad(currentAngle)) * velocity;
-			
-			ctx.save();
-
-			// draw the collision detection ring
-			ctx.beginPath();
-			ctx.strokeStyle = "#fff";
-			ctx.strokeWidth = 2;
-			ctx.arc(posX+collisionRadius/2, posY+collisionRadius/2, collisionRadius, 0, Math.PI*2, true); 
-			ctx.closePath();
-			ctx.stroke();
-			
-			// draw the collision detection ring
-			ctx.beginPath();
-			ctx.strokeStyle = "#0F0";
-			ctx.arc(posX+shieldRadius/2, posY+shieldRadius/2, shieldRadius, 0, Math.PI*2, true); 
-			ctx.closePath();
-			ctx.stroke();
-			
-			// draw the tank
-			ctx.translate(posX + image.width/2, posY + image.height/2);
-			ctx.rotate(Math.deg2rad(currentAngle));
-			ctx.drawImage(image, -(image.width/2),-(image.height/2));
-
-			// restore the projection
-			ctx.restore();
-			
-			var pointBarWidth = 45,
-					life = (health/100);
-			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth, 7);
-			if(life > .66) {
-				ctx.fillStyle = '#0f0';
-			} else if(life > .33) {
-				ctx.fillStyle = '#ff0';
-			} else {
-				ctx.fillStyle = '#f00';
-			}
-
-			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth*life, 7);
-			
-			
-		},
-		getCollisionBoundary: function() {
-			return {
-				r: collisionRadius,
-				x: posX,
-				y: posY
-			};
-		}
-	};
-	
-	return pub;
-	
 };
 
 hbolo.PillBoxSprite = function(data) {
