@@ -47,7 +47,7 @@ hbolo.MappingSystem = (function() {
 			// save an encoded version of the image to use during the game
 			map = new Image();
 			map.src = ctx.canvas.toDataURL();
-			game.start();
+			map.onLoad = (function() {game.start();})();
 		}
 	};
 	
