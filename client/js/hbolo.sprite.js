@@ -6,9 +6,9 @@ hbolo.PlayerSprite = function(data) {
 			velocity = 0.0,
 			acceleration = 0.05,
 			deceleration = 0.08,
-			maxSpeed = 1.5,
+			maxSpeed = 1.8,
 			currentAngle = 0,
-			rotationSpeed = 4, // how fast we rotate
+			rotationSpeed = .07, // how fast we rotate
 			weaponCooldown = 10,
 			posX,
 			posY,
@@ -57,8 +57,8 @@ hbolo.PlayerSprite = function(data) {
 				posY = undefined;
 			}
 			
-			if(posX === undefined) posX = 300;
-			if(posY === undefined) posY = 300;
+			if(posX === undefined) posX = 400;
+			if(posY === undefined) posY = 20;
 
 			// UPDATE MOVEMENT VELOCITIES
 			// moving forward
@@ -91,8 +91,8 @@ hbolo.PlayerSprite = function(data) {
 			}
 			
 			// attempt to move
-			newPosX = posX + Math.sin(Math.deg2rad(currentAngle)) * velocity;
-			newPosY = posY - Math.cos(Math.deg2rad(currentAngle)) * velocity;
+			newPosX = posX + Math.sin(currentAngle) * velocity;
+			newPosY = posY - Math.cos(currentAngle) * velocity;
 			if(!self.getCollisions()) {
 				if(!game.mapCollision(newPosX, posY)) {
 					posX = newPosX;
@@ -130,33 +130,42 @@ hbolo.PlayerSprite = function(data) {
 			ctx.save();
 
 			// draw the collision detection ring
-			ctx.beginPath();
-			ctx.strokeStyle = "#fff";
-			ctx.strokeWidth = 2;
-			ctx.arc(posX+collisionRadius/2, posY+collisionRadius/2, collisionRadius, 0, Math.PI*2, true); 
-			ctx.closePath();
-			ctx.stroke();
+			// ctx.beginPath();
+			// ctx.strokeStyle = "#fff";
+			// ctx.strokeWidth = 2;
+			// ctx.arc(posX+collisionRadius/2, posY+collisionRadius/2, collisionRadius, 0, Math.PI*2, true); 
+			// ctx.closePath();
+			// ctx.stroke();
 			
-			// draw the collision detection ring
-			ctx.beginPath();
-			ctx.strokeStyle = "#0F0";
-			ctx.arc(posX+shieldRadius/2, posY+shieldRadius/2, shieldRadius, 0, Math.PI*2, true); 
-			ctx.closePath();
-			ctx.stroke();
+			// draw the shield detection ring
+			// ctx.beginPath();
+			// ctx.strokeStyle = "#0F0";
+			// ctx.arc(posX+shieldRadius/2, posY+shieldRadius/2, shieldRadius, 0, Math.PI*2, true); 
+			// ctx.closePath();
+			// ctx.stroke();
 			
 			// draw the tank
 			ctx.translate(posX + image.width/2, posY + image.height/2);
-			ctx.rotate(Math.deg2rad(currentAngle));
+			ctx.rotate(currentAngle);
 			ctx.drawImage(image, -(image.width/2),-(image.height/2));
 
 			// restore the projection
 			ctx.restore();
+			
+			
+			
 		},
 		getCollisionBoundary: function() {
 			return {
 				r: collisionRadius,
 				x: newPosX,
 				y: newPosY
+			};
+		},
+		getPosition: function() {
+			return {
+				x: posX,
+				y: posY
 			};
 		}
 	};
@@ -172,14 +181,17 @@ hbolo.EnemySprite = function(data) {
 			acceleration = 0.05,
 			deceleration = 0.08,
 			maxSpeed = 1.5,
-			currentAngle = 0,
-			rotationSpeed = 4, // how fast we rotate
+			currentAngle = 250,
+			rotationSpeed = 8, // how fast we rotate
 			weaponCooldown = 10,
+			newPosX = 200,
+			newPosY = 200,
 			posX = 200,
 			posY = 200,
 			health = 100,
 			collisionRadius = 12,
-			shieldRadius = 14;
+			shieldRadius = 14
+			prey: {};
 
 	switch(data.type) {
 		case "tank":
@@ -193,7 +205,7 @@ hbolo.EnemySprite = function(data) {
 		getCollisions: function(self){
 			for(var i in game.getGameObjects().imperviousSprites) {
 				var object = game.getGameObjects().imperviousSprites[i];
-				if(self !== object) {
+				if(pub !== object) {
 					// check for some sort of collision
 					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
 						return true;
@@ -216,43 +228,89 @@ hbolo.EnemySprite = function(data) {
 	var pub = {
 		update: function(input) {
 			
-			self.getCollisions(this);
 			self.getDamage();
-			
 			if(health <= 0) {
 				game.removeImperviousSprite(this);
+				return;
 			}
 			
-			// CHASE ALGORITHM
+			if(posX === undefined) posX = 300;
+			if(posY === undefined) posY = 300;
 			
+			if(velocity < maxSpeed) velocity += acceleration;
 
+			// CHASE ALGORITHM			
+
+			// update the enemys vector
+			prey = {
+				x: game.getPlayer().getPosition().x,
+				y: game.getPlayer().getPosition().y
+			};
+			
+			prey.bearing = Math.abs(Math.floor(Math.rad2deg(Math.atan((prey.y-posY)/(prey.x-posX)))));
+			
+			// top right quadrant
+			if(prey.x > posX && prey.y < posY) {
+				prey.bearing = 90 - prey.bearing;
+			// bottom right quadrant
+			} else if(prey.x > posX && prey.y > posY) {
+				prey.bearing += 90;
+			// bottom left quadrant
+			}	else if(prey.x < posX && prey.y > posY) {
+				prey.bearing = 270 - prey.bearing;
+			// top left quadrant
+			} else if(prey.x < posX && prey.y < posY) {
+				prey.bearing = 270 + prey.bearing;
+			}
+		
+		
+			var delta = Math.abs(prey.bearing - currentAngle);
+			if(delta < 180) {
+				if(currentAngle < prey.bearing) {
+					currentAngle += rotationSpeed;
+				} else {
+					currentAngle -= rotationSpeed;
+				}
+			} else {
+				currentAngle = prey.bearing;
+			}
+						
+			newPosX = posX + Math.sin(Math.deg2rad(currentAngle)) * velocity;
+			newPosY = posY - Math.cos(Math.deg2rad(currentAngle)) * velocity;
+			if(!self.getCollisions()) {
+				if(!game.mapCollision(newPosX, posY)) {
+					posX = newPosX;
+				}
+				// update the users y position
+				if(!game.mapCollision(posX, newPosY)) {
+					posY = newPosY;
+				}
+			}
 		},
 		draw: function(ctx) {
 
 			if(!ctx) throw "Must pass the drawing context";
-			if(posX === undefined) posX = ctx.canvas.width/2;
-			if(posY === undefined) posY = ctx.canvas.height/2;
-
-			// crazy vector math stuff going on here
-			posX += Math.sin(Math.deg2rad(currentAngle)) * velocity;
-			posY -= Math.cos(Math.deg2rad(currentAngle)) * velocity;
 			
 			ctx.save();
 
+			// draw the enemy tracking triangle
+			// ctx.strokeStyle = "#fff";
+			// ctx.beginPath();
+			// ctx.moveTo(posX, posY);
+			// ctx.lineTo(prey.x, posY);
+			// ctx.lineTo(prey.x, prey.y);
+			// ctx.lineTo(posX, posY);
+			// ctx.stroke();
+			// ctx.closePath();
+			// ctx.strokeText(prey.bearing + "deg", 0, 12);
+
 			// draw the collision detection ring
-			ctx.beginPath();
-			ctx.strokeStyle = "#fff";
-			ctx.strokeWidth = 2;
-			ctx.arc(posX+collisionRadius/2, posY+collisionRadius/2, collisionRadius, 0, Math.PI*2, true); 
-			ctx.closePath();
-			ctx.stroke();
-			
-			// draw the collision detection ring
-			ctx.beginPath();
-			ctx.strokeStyle = "#0F0";
-			ctx.arc(posX+shieldRadius/2, posY+shieldRadius/2, shieldRadius, 0, Math.PI*2, true); 
-			ctx.closePath();
-			ctx.stroke();
+			// ctx.beginPath();
+			// ctx.strokeStyle = "#fff";
+			// ctx.strokeWidth = 2;
+			// ctx.arc(posX+collisionRadius/2, posY+collisionRadius/2, collisionRadius, 0, Math.PI*2, true); 
+			// ctx.closePath();
+			// ctx.stroke();
 			
 			// draw the tank
 			ctx.translate(posX + image.width/2, posY + image.height/2);
@@ -262,8 +320,10 @@ hbolo.EnemySprite = function(data) {
 			// restore the projection
 			ctx.restore();
 			
+			
+			// HEALTH BAR
 			var pointBarWidth = 45,
-					life = (health/100);
+					life = (health/100);		
 			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth, 7);
 			if(life > .66) {
 				ctx.fillStyle = '#0f0';
@@ -272,9 +332,14 @@ hbolo.EnemySprite = function(data) {
 			} else {
 				ctx.fillStyle = '#f00';
 			}
-
 			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth*life, 7);
-			
+
+			// PLAYER NAME
+			ctx.shadowBlur = 1;
+			ctx.shadowColor = '#000';
+			ctx.fillStyle = "#fff";
+			ctx.font = "bold 10px verdana"
+			ctx.fillText("COMPUTER", posX+image.width+5, posY-8);
 			
 		},
 		getCollisionBoundary: function() {
@@ -342,13 +407,20 @@ hbolo.FlameThrowerSprite = function(data) {
 
 	var pub = {
 		update: function(input) {
-			posX += Math.sin(Math.deg2rad(angle)) * velocity;
-			posY -= Math.cos(Math.deg2rad(angle)) * velocity;
-			currentLife++;
-			if(self.getCollisions()) {
-				currentLife = lifeTime-1;
+			if(currentLife >= lifeTime) {
+				game.removeDamagingSprite(this);
+				return;
 			}
-			if(currentLife >= lifeTime) game.removeDamagingSprite(this);
+			
+			posX += Math.sin(angle) * velocity;
+			posY -= Math.cos(angle) * velocity;
+
+			currentLife++;
+
+			// if(self.getCollisions()) {
+			// 	currentLife = lifeTime;
+			// }
+
 		},
 		draw: function(ctx) {
 			radius+=.8;

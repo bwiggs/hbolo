@@ -84,6 +84,9 @@ var game = (function() {
 		},
 		mapCollision: function(x, y){
 			return map.checkTileCollision(x, y);
+		},
+		getPlayer: function() {
+			return player;
 		}
 	};
 	
