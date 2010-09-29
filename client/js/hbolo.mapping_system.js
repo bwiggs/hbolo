@@ -7,26 +7,35 @@ hbolo.MappingSystem = (function() {
 			viewportY = 0,
 			ctx,
 			path = "/maps/",
-			map;
+			map,
+			mapTiles;
 	
 	var self = {
 		loadMap: function(mapName) {
 			path += mapName + "/";
 			$.ajax({
 				url: path + 'digest.json',
-				success: function(json) {self.loadSuccess(json); },
+				success: function(json) {self.buildDigest(json); },
 				failure: function() {
 					alert("Couldn't load the map digest\n" + path);
 					GameLoop = false;
 				}
 			});
 		},
-		loadSuccess: function(json) {
+		buildDigest: function(json) {
 			digest = eval('(' + json + ')');
 			digest.map.file = path + "map.png";
-			var mapTiles = new Image();
+			mapTiles = new Image();
+			mapTiles.onload = function() {self.buildMap();};
 			mapTiles.src = digest.map.file;
-
+		},
+		checkMapBoundaryCollision: function(x, y) {
+			if(x <= 0 ||
+				 x >= map.width ||
+				 y <=0 ||
+				 y >= map.height) return true;
+		},
+		buildMap: function() {
 			// loop through each data row
 			for(y in digest.map.layout) {
 
@@ -44,16 +53,14 @@ hbolo.MappingSystem = (function() {
 					ctx.drawImage(mapTiles, sX, sY, digest.map.tile_size, digest.map.tile_size, mapX, mapY, digest.map.tile_size, digest.map.tile_size);
 				}
 			}
+			
 			// save an encoded version of the image to use during the game
 			map = new Image();
+			map.onload = function() {
+				game.start();
+			};
 			map.src = ctx.canvas.toDataURL();
-			map.onLoad = (function() {game.start();})();
-		},
-		checkMapBoundaryCollision: function(x, y) {
-			if(x <= 0 ||
-				 x >= map.width ||
-				 y <=0 ||
-				 y >= map.height) return true;
+			
 		}
 	};
 	

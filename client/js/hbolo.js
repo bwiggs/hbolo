@@ -22,6 +22,8 @@ var game = (function() {
 				damagingSprites: []
 			};
 			gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
+			gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
+			gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
 		},
 		loop: function() {
 			if(! paused) {

@@ -186,8 +186,8 @@ hbolo.EnemySprite = function(data) {
 			weaponCooldown = 10,
 			newPosX = 200,
 			newPosY = 200,
-			posX = 200,
-			posY = 200,
+			posX = undefined,
+			posY = undefined,
 			health = 100,
 			collisionRadius = 12,
 			shieldRadius = 14
@@ -234,8 +234,8 @@ hbolo.EnemySprite = function(data) {
 				return;
 			}
 			
-			if(posX === undefined) posX = 300;
-			if(posY === undefined) posY = 300;
+			if(posX === undefined) posX = Math.random(400)*400;
+			if(posY === undefined) posY = Math.random(400)*400;
 			
 			if(velocity < maxSpeed) velocity += acceleration;
 
@@ -277,15 +277,19 @@ hbolo.EnemySprite = function(data) {
 						
 			newPosX = posX + Math.sin(Math.deg2rad(currentAngle)) * velocity;
 			newPosY = posY - Math.cos(Math.deg2rad(currentAngle)) * velocity;
-			if(!self.getCollisions()) {
-				if(!game.mapCollision(newPosX, posY)) {
-					posX = newPosX;
-				}
-				// update the users y position
-				if(!game.mapCollision(posX, newPosY)) {
-					posY = newPosY;
-				}
-			}
+			// if(!self.getCollisions()) {
+			// 	if(!game.mapCollision(newPosX, posY)) {
+			// 		posX = newPosX;
+			// 	}
+			// 	// update the users y position
+			// 	if(!game.mapCollision(posX, newPosY)) {
+			// 		posY = newPosY;
+			// 	}
+			// }
+			
+			posX = newPosX;
+			posY = newPosY;
+			
 		},
 		draw: function(ctx) {
 
@@ -324,6 +328,7 @@ hbolo.EnemySprite = function(data) {
 			// HEALTH BAR
 			var pointBarWidth = 45,
 					life = (health/100);		
+			ctx.fillStyle = "#000";
 			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth, 7);
 			if(life > .66) {
 				ctx.fillStyle = '#0f0';
