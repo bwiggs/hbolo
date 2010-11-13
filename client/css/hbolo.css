@@ -1,0 +1,7 @@
+html, body { margin: 0; background-color: #333; }
+h1 { text-align: center; color: #fff; }
+#container { margin: 0 auto; width: 800px;}
+canvas { margin: 0; background: #000; }
+
+h2 { color: #fff; }
+ul.instructions li { color: #fff; }

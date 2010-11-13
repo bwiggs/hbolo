@@ -3,12 +3,8 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>hBolo - Bolo on the web!</title>
-	<style type="text/css" media="screen">
-		html, body { margin: 0; background-color: #333; }
-		h1 { text-align: center; color: #fff; }
-		#container { margin: 0 auto; width: 800px;}
-		canvas { margin: 0; background: #000; }
-	</style>
+	<link rel="stylesheet" href="/css/hbolo.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="/css/keys.css" type="text/css" media="screen" />
 	<script type="text/javascript">
 
 	  var _gaq = _gaq || [];
@@ -26,7 +22,16 @@
 <body id="index" onload="game.init();">
 	<!-- <h1>hBolo!</h1> -->
 	<div id="container">
+		<h1>hBolo - Bolo on the web!</h1>
 		<canvas id="canvas" width="640" height="480"></canvas>
+		<h2>Instructions</h2>
+		<ul class="instructions">
+			<li>Forward: <span class="key light">W</span></li>
+			<li>Backward: <kbd class="light">S</kbd></li>
+			<li>Left: <kbd class="light">A</kbd></li>
+			<li>Right: <kbd class="light">D</kbd></li>
+			<li>Fire Weapon: <kbd class="light">Space</kbd></li>
+		</ul>
 	</div>
 	<script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
 	<script type="text/javascript" src="/js/lib.math.js"></script>
