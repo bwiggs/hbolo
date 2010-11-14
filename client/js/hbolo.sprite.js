@@ -8,7 +8,7 @@ hbolo.PlayerSprite = function(data) {
 			deceleration = 0.08,
 			maxSpeed = 1.8,
 			currentAngle = 0,
-			rotationSpeed = .07, // how fast we rotate
+			rotationSpeed = 0.07, // how fast we rotate
 			weaponCooldown = 10,
 			posX,
 			posY,
@@ -36,6 +36,7 @@ hbolo.PlayerSprite = function(data) {
 					}
 				}
 			}
+			return false;
 		},
 		getDamage: function(self){
 			for(var i in game.getGameObjects()) {
@@ -111,17 +112,13 @@ hbolo.PlayerSprite = function(data) {
 			if(input.getKeyStates.fire) {
 				if(weaponCooldown == 0) {
 					weaponCooldown = 0;
-					game.addDamagingSprite(new hbolo.FlameThrowerSprite({
+					game.addDamagingSprite(new hbolo.FlamethrowerSprite({
 						angle:currentAngle,
 						posX: posX,
 						posY: posY
 					}));
 				}
 			}
-			
-			// handle damage
-			
-
 		},
 		draw: function(ctx) {
 
@@ -190,8 +187,8 @@ hbolo.EnemySprite = function(data) {
 			posY = undefined,
 			health = 100,
 			collisionRadius = 12,
-			shieldRadius = 14
-			prey: {};
+			shieldRadius = 14,
+			prey = {};
 
 	switch(data.type) {
 		case "tank":
@@ -212,6 +209,7 @@ hbolo.EnemySprite = function(data) {
 					}
 				}
 			}
+			return false;
 		},
 		getDamage: function(self){
 			for(var i in game.getGameObjects().damagingSprites) {
@@ -277,18 +275,16 @@ hbolo.EnemySprite = function(data) {
 						
 			newPosX = posX + Math.sin(Math.deg2rad(currentAngle)) * velocity;
 			newPosY = posY - Math.cos(Math.deg2rad(currentAngle)) * velocity;
-			// if(!self.getCollisions()) {
-			// 	if(!game.mapCollision(newPosX, posY)) {
-			// 		posX = newPosX;
-			// 	}
-			// 	// update the users y position
-			// 	if(!game.mapCollision(posX, newPosY)) {
-			// 		posY = newPosY;
-			// 	}
-			// }
 			
-			posX = newPosX;
-			posY = newPosY;
+      if(!self.getCollisions()) {
+        if(!game.mapCollision(newPosX, posY)) {
+          posX = newPosX;
+        }
+        // update the users y position
+        if(!game.mapCollision(posX, newPosY)) {
+          posY = newPosY;
+        }
+      }
 			
 		},
 		draw: function(ctx) {
@@ -330,9 +326,9 @@ hbolo.EnemySprite = function(data) {
 					life = (health/100);		
 			ctx.fillStyle = "#000";
 			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth, 7);
-			if(life > .66) {
+			if(life > 0.66) {
 				ctx.fillStyle = '#0f0';
-			} else if(life > .33) {
+			} else if(life > 0.33) {
 				ctx.fillStyle = '#ff0';
 			} else {
 				ctx.fillStyle = '#f00';
@@ -343,7 +339,7 @@ hbolo.EnemySprite = function(data) {
 			ctx.shadowBlur = 1;
 			ctx.shadowColor = '#000';
 			ctx.fillStyle = "#fff";
-			ctx.font = "bold 10px verdana"
+			ctx.font = "bold 10px verdana";
 			ctx.fillText("COMPUTER", posX+image.width+5, posY-8);
 			
 		},
@@ -366,26 +362,38 @@ hbolo.MachineGunSprite = function(data) {
 			angle = data.angle,
 			posX = data.posX,
 			posY = data.posY,
-			lifeTime = 30;
+			lifeTime = 30,
+			collisionRadius = 2,
+			damagePoints = 0.2;
 
 	return {
 		update: function(input) {
-			posX += Math.sin(Math.deg2rad(angle)) * velocity;
-			posY -= Math.cos(Math.deg2rad(angle)) * velocity;
+			posX += Math.sin(angle) * velocity;
+			posY -= Math.cos(angle) * velocity;
 			lifeTime--;
 			if(lifeTime <= 0) game.removeDamagingSprite(this); 
 		},
 		draw: function(ctx) {
 			ctx.beginPath();
 			ctx.fillStyle = "#fff";
-			ctx.arc(posX+8, posY, 2, 0, Math.PI*2, true); 
+			ctx.arc(posX+8, posY, 2, 0, Math.PI*2, true);
 			ctx.closePath();
 			ctx.fill();
+		},
+		getCollisionBoundary: function() {
+			return {
+				r: collisionRadius,
+				x: posX,
+				y: posY
+			};
+		},
+		getDamagePoints: function(){
+			return damagePoints;
 		}
 	};
 };
 
-hbolo.FlameThrowerSprite = function(data) {
+hbolo.FlamethrowerSprite = function(data) {
 
 	var velocity = 6,
 			angle = data.angle,
@@ -407,6 +415,7 @@ hbolo.FlameThrowerSprite = function(data) {
 					}
 				}
 			}
+			return false;
 		}
 	};
 
@@ -422,13 +431,9 @@ hbolo.FlameThrowerSprite = function(data) {
 
 			currentLife++;
 
-			// if(self.getCollisions()) {
-			// 	currentLife = lifeTime;
-			// }
-
 		},
 		draw: function(ctx) {
-			radius+=.8;
+			radius+=0.8;
 			ctx.beginPath();
 			ctx.fillStyle = "rgba(255, "+Math.floor(Math.random(92)*92)+", 0, " + (1 - currentLife/lifeTime) + ")";
 			// all this randomization stuff just makes the flame wobble...
