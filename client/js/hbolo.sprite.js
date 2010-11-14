@@ -1,5 +1,9 @@
 var hbolo = hbolo || {};
 
+//=============================================================================
+// PLAYER SPRITE
+//=============================================================================
+
 hbolo.PlayerSprite = function(data) {
 
 	var image = new Image(),
@@ -171,190 +175,9 @@ hbolo.PlayerSprite = function(data) {
 	
 };
 
-hbolo.EnemySprite = function(data) {
-
-	var image = new Image(),
-			velocity = 0.0,
-			acceleration = 0.05,
-			deceleration = 0.08,
-			maxSpeed = 1.5,
-			currentAngle = 250,
-			rotationSpeed = 8, // how fast we rotate
-			weaponCooldown = 10,
-			newPosX = 200,
-			newPosY = 200,
-			posX = undefined,
-			posY = undefined,
-			health = 100,
-			collisionRadius = 12,
-			shieldRadius = 14,
-			prey = {};
-
-	switch(data.type) {
-		case "tank":
-			image.src = "/tanks/blue.png";
-			break;
-		default:
-			throw "Sprite(): Must provide an asset type.";
-	}
-
-	var self = {
-		getCollisions: function(self){
-			for(var i in game.getGameObjects().imperviousSprites) {
-				var object = game.getGameObjects().imperviousSprites[i];
-				if(pub !== object) {
-					// check for some sort of collision
-					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
-						return true;
-					}
-				}
-			}
-			return false;
-		},
-		getDamage: function(self){
-			for(var i in game.getGameObjects().damagingSprites) {
-				var object = game.getGameObjects().damagingSprites[i];
-				if(self !== object) {
-					if(Physics.collision(pub.getCollisionBoundary(),object.getCollisionBoundary())) {
-						health -= object.getDamagePoints();
-					}
-				}
-			}
-		}
-	};
-	
-	var pub = {
-		update: function(input) {
-			
-			self.getDamage();
-			if(health <= 0) {
-				game.removeImperviousSprite(this);
-				return;
-			}
-			
-			if(posX === undefined) posX = Math.random(400)*400;
-			if(posY === undefined) posY = Math.random(400)*400;
-			
-			if(velocity < maxSpeed) velocity += acceleration;
-
-			// CHASE ALGORITHM			
-
-			// update the enemys vector
-			prey = {
-				x: game.getPlayer().getPosition().x,
-				y: game.getPlayer().getPosition().y
-			};
-			
-			prey.bearing = Math.abs(Math.floor(Math.rad2deg(Math.atan((prey.y-posY)/(prey.x-posX)))));
-			
-			// top right quadrant
-			if(prey.x > posX && prey.y < posY) {
-				prey.bearing = 90 - prey.bearing;
-			// bottom right quadrant
-			} else if(prey.x > posX && prey.y > posY) {
-				prey.bearing += 90;
-			// bottom left quadrant
-			}	else if(prey.x < posX && prey.y > posY) {
-				prey.bearing = 270 - prey.bearing;
-			// top left quadrant
-			} else if(prey.x < posX && prey.y < posY) {
-				prey.bearing = 270 + prey.bearing;
-			}
-		
-		
-			var delta = Math.abs(prey.bearing - currentAngle);
-			if(delta < 180) {
-				if(currentAngle < prey.bearing) {
-					currentAngle += rotationSpeed;
-				} else {
-					currentAngle -= rotationSpeed;
-				}
-			} else {
-				currentAngle = prey.bearing;
-			}
-						
-			newPosX = posX + Math.sin(Math.deg2rad(currentAngle)) * velocity;
-			newPosY = posY - Math.cos(Math.deg2rad(currentAngle)) * velocity;
-			
-      if(!self.getCollisions()) {
-        if(!game.mapCollision(newPosX, posY)) {
-          posX = newPosX;
-        }
-        // update the users y position
-        if(!game.mapCollision(posX, newPosY)) {
-          posY = newPosY;
-        }
-      }
-			
-		},
-		draw: function(ctx) {
-
-			if(!ctx) throw "Must pass the drawing context";
-			
-			ctx.save();
-
-			// draw the enemy tracking triangle
-			// ctx.strokeStyle = "#fff";
-			// ctx.beginPath();
-			// ctx.moveTo(posX, posY);
-			// ctx.lineTo(prey.x, posY);
-			// ctx.lineTo(prey.x, prey.y);
-			// ctx.lineTo(posX, posY);
-			// ctx.stroke();
-			// ctx.closePath();
-			// ctx.strokeText(prey.bearing + "deg", 0, 12);
-
-			// draw the collision detection ring
-			// ctx.beginPath();
-			// ctx.strokeStyle = "#fff";
-			// ctx.strokeWidth = 2;
-			// ctx.arc(posX+collisionRadius/2, posY+collisionRadius/2, collisionRadius, 0, Math.PI*2, true); 
-			// ctx.closePath();
-			// ctx.stroke();
-			
-			// draw the tank
-			ctx.translate(posX + image.width/2, posY + image.height/2);
-			ctx.rotate(Math.deg2rad(currentAngle));
-			ctx.drawImage(image, -(image.width/2),-(image.height/2));
-
-			// restore the projection
-			ctx.restore();
-			
-			
-			// HEALTH BAR
-			var pointBarWidth = 45,
-					life = (health/100);		
-			ctx.fillStyle = "#000";
-			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth, 7);
-			if(life > 0.66) {
-				ctx.fillStyle = '#0f0';
-			} else if(life > 0.33) {
-				ctx.fillStyle = '#ff0';
-			} else {
-				ctx.fillStyle = '#f00';
-			}
-			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth*life, 7);
-
-			// PLAYER NAME
-			ctx.shadowBlur = 1;
-			ctx.shadowColor = '#000';
-			ctx.fillStyle = "#fff";
-			ctx.font = "bold 10px verdana";
-			ctx.fillText("COMPUTER", posX+image.width+5, posY-8);
-			
-		},
-		getCollisionBoundary: function() {
-			return {
-				r: collisionRadius,
-				x: posX,
-				y: posY
-			};
-		}
-	};
-	
-	return pub;
-	
-};
+//=============================================================================
+// MACHINE GUN SPRITE
+//=============================================================================
 
 hbolo.MachineGunSprite = function(data) {
 
@@ -392,6 +215,10 @@ hbolo.MachineGunSprite = function(data) {
 		}
 	};
 };
+
+//=============================================================================
+// FLAMETHROWER SPRITE
+//=============================================================================
 
 hbolo.FlamethrowerSprite = function(data) {
 
@@ -455,6 +282,10 @@ hbolo.FlamethrowerSprite = function(data) {
 	
 	return pub;
 };
+
+//=============================================================================
+// PILLBOX SPRITE
+//=============================================================================
 
 hbolo.PillBoxSprite = function(data) {
 

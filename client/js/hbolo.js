@@ -13,7 +13,7 @@ var game = (function() {
 		init: function() {
 			ctx = document.getElementById("canvas").getContext('2d');
 			input = new hbolo.InputManager();	
-			map = hbolo.MappingSystem,
+			map = hbolo.MappingSystem;
 			map.init(ctx, 'maze');
 			paused = false;
 			player = new hbolo.PlayerSprite({type:"tank"});
@@ -22,8 +22,8 @@ var game = (function() {
 				damagingSprites: []
 			};
 			gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
-			gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
-			gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
+			//gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
+			//gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
 		},
 		loop: function() {
 			if(! paused) {
@@ -89,6 +89,9 @@ var game = (function() {
 		},
 		getPlayer: function() {
 			return player;
+		},
+		getMap: function() {
+			return map;
 		}
 	};
 	

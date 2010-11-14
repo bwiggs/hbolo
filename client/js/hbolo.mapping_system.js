@@ -8,6 +8,7 @@ hbolo.MappingSystem = (function() {
 			ctx,
 			path = "/maps/",
 			map,
+			dimensions = {},
 			mapTiles;
 	
 	var self = {
@@ -36,6 +37,10 @@ hbolo.MappingSystem = (function() {
 				 y >= map.height) return true;
 		},
 		buildMap: function() {
+			// set the map dimensions
+			dimensions.height = digest.map.layout.length;
+			dimensions.width = digest.map.layout[0].length;
+
 			// loop through each data row
 			for(y in digest.map.layout) {
 
@@ -72,6 +77,15 @@ hbolo.MappingSystem = (function() {
 		},
 		draw: function() {
 			ctx.drawImage(map, viewportX, viewportY);
+		},
+		getDimensions: function() {
+			return dimensions;
+		},
+		getInhabitedTileNode: function(x, y) {
+		  return {
+				x: Math.floor(y/digest.map.tile_size),
+				y: Math.floor(x/digest.map.tile_size)
+			};
 		},
 		checkTileCollision: function(x, y) {
 			if(self.checkMapBoundaryCollision(x, y)) return true;
