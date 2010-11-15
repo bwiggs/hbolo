@@ -181,6 +181,40 @@ hbolo.EnemySprite = function(data) {
 					open = _.sortBy(open, function(node) { return node.cost; });
 				}
 			}
+			
+			var pathNode = aStarPath.shift();
+			pathNode.x = pathNode.x * 16;
+			pathNode.y = pathNode.y * 16;
+			pathNode.bearing = Math.abs(Math.floor(Math.rad2deg(Math.atan((pathNode.y-posY)/(pathNode.x-posX)))));;
+			
+			// top right quadrant
+			if(pathNode.x > posX && pathNode.y < posY) {
+				pathNode.bearing = 90 - pathNode.bearing;
+			// bottom right quadrant
+			} else if(pathNode.x > posX && pathNode.y > posY) {
+				pathNode.bearing += 90;
+			// bottom left quadrant
+			}	else if(pathNode.x < posX && pathNode.y > posY) {
+				pathNode.bearing = 270 - pathNode.bearing;
+			// top left quadrant
+			} else if(pathNode.x < posX && pathNode.y < posY) {
+				pathNode.bearing = 270 + pathNode.bearing;
+			}
+		
+		
+			var delta = Math.abs(pathNode.bearing - currentAngle);
+			if(delta < 180) {
+				if(currentAngle < pathNode.bearing) {
+					currentAngle += rotationSpeed;
+				} else {
+					currentAngle -= rotationSpeed;
+				}
+			} else {
+				currentAngle = pathNode.bearing;
+			}
+		
+			newPosX = posX + Math.sin(Math.deg2rad(currentAngle)) * velocity;
+			newPosY = posY - Math.cos(Math.deg2rad(currentAngle)) * velocity;
 		}
 	};
 	
@@ -207,6 +241,7 @@ hbolo.EnemySprite = function(data) {
 			self.aStarAlgorithm();
 			//PathfindingBehavior.pursue();
 
+			// update the x,y checking for collisions
       if(!self.getCollisions()) {
         if(!game.mapCollision(newPosX, posY)) {
           posX = newPosX;
