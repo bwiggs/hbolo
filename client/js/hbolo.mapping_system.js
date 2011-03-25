@@ -2,60 +2,69 @@ var hbolo = hbolo || {};
 
 hbolo.MappingSystem = (function() {
 	
-	var digest = {},
-			viewportX = 0,
-			viewportY = 0,
-			ctx,
-			path = "/maps/",
+	var _digest = {},
+			_viewportX = 0,
+			_viewportY = 0,
+			_ctx,
+			_path = "/maps/",
 			map,
-			dimensions = {},
-			mapTiles;
+			_mapTileDimensions = {},
+			_mapTiles,
+      mapBoundaries = {
+        x:0,
+        y:0
+      };
 	
-	var self = {
+	var _priv = {
 		loadMap: function(mapName) {
-			path += mapName + "/";
+			_path += mapName + "/";
 			$.ajax({
-				url: path + 'digest.json',
-				success: function(json) {self.buildDigest(json); },
+				url: _path + 'digest.json',
+				success: _priv.buildDigest,
 				failure: function() {
-					alert("Couldn't load the map digest\n" + path);
+					alert("Couldn't load the map _digest\n" + _path);
 					GameLoop = false;
 				}
 			});
 		},
 		buildDigest: function(json) {
-			digest = eval('(' + json + ')');
-			digest.map.file = path + "map.png";
-			mapTiles = new Image();
-			mapTiles.onload = function() {self.buildMap();};
-			mapTiles.src = digest.map.file;
+			_digest = eval('(' + json + ')');
+			_digest.map.file = _path + "map.png";
+			_mapTiles = new Image();
+			_mapTiles.onload = function() {_priv.buildMap();};
+			_mapTiles.src = _digest.map.file;
 		},
 		checkMapBoundaryCollision: function(x, y) {
-			if(x <= 0 ||
-				 x >= map.width ||
-				 y <=0 ||
-				 y >= map.height) return true;
+      // get the current tile for the sprite
+      x = Math.floor(x/_digest.map.tile_size);
+      y = Math.floor(y/_digest.map.tile_size);
+
+			if(x < 0 ||
+				 x >= _mapTileDimensions.width-1 ||
+				 y < 0 ||
+				 y >= _mapTileDimensions.height-1) return true;
 		},
 		buildMap: function() {
-			// set the map dimensions
-			dimensions.height = digest.map.layout.length;
-			dimensions.width = digest.map.layout[0].length;
+			
+      // set the map dimensions
+			_mapTileDimensions.height = _digest.map.layout.length;
+			_mapTileDimensions.width = _digest.map.layout[0].length;
 
 			// loop through each data row
-			for(y in digest.map.layout) {
+			for(var y in _digest.map.layout) {
 
 				// get the number of tiles for the row
-				var numTiles = digest.map.layout[y].length;
+				var numTiles = _digest.map.layout[y].length;
 
 				for(x = 0; x < numTiles; x++) {
 
-					var currentTile = digest.map.layout[y].charAt(x),
-							sX = digest.map.tile_mappings[currentTile].split(",")[0],
-							sY = digest.map.tile_mappings[currentTile].split(",")[1],
-							mapX = x * digest.map.tile_size,
-							mapY = y * digest.map.tile_size;
+					var currentTile = _digest.map.layout[y].charAt(x),
+							sX = _digest.map.tile_mappings[currentTile].split(",")[0],
+							sY = _digest.map.tile_mappings[currentTile].split(",")[1],
+							mapX = x * _digest.map.tile_size,
+							mapY = y * _digest.map.tile_size;
 
-					ctx.drawImage(mapTiles, sX, sY, digest.map.tile_size, digest.map.tile_size, mapX, mapY, digest.map.tile_size, digest.map.tile_size);
+					_ctx.drawImage(_mapTiles, sX, sY, _digest.map.tile_size, _digest.map.tile_size, mapX, mapY, _digest.map.tile_size, _digest.map.tile_size);
 				}
 			}
 			
@@ -64,7 +73,7 @@ hbolo.MappingSystem = (function() {
 			map.onload = function() {
 				game.start();
 			};
-			map.src = ctx.canvas.toDataURL();
+			map.src = _ctx.canvas.toDataURL();
 			
 		}
 	};
@@ -72,26 +81,26 @@ hbolo.MappingSystem = (function() {
 	var pub = {
 		init: function(context, mapName) {
 				if(!context) throw "Must pass in the drawing context";
-				ctx = context;
-				self.loadMap(mapName);
+				_ctx = context;
+				_priv.loadMap(mapName);
 		},
 		draw: function() {
-			ctx.drawImage(map, viewportX, viewportY);
+			_ctx.drawImage(map, _viewportX, _viewportY);
 		},
 		getDimensions: function() {
-			return dimensions;
+			return _mapTileDimensions;
 		},
 		getInhabitedTileNode: function(x, y) {
 		  return {
-				x: Math.floor(y/digest.map.tile_size),
-				y: Math.floor(x/digest.map.tile_size)
+				x: Math.floor(y/_digest.map.tile_size),
+				y: Math.floor(x/_digest.map.tile_size)
 			};
 		},
 		checkTileCollision: function(x, y) {
-			if(self.checkMapBoundaryCollision(x, y)) return true;
-			var currentTile = digest.map.layout[Math.floor(y/digest.map.tile_size)][Math.floor(x/digest.map.tile_size)];
-			for(var i = 0; i < digest.map.impervious_tiles.length; i++) {
-				if(currentTile == digest.map.impervious_tiles[i]) return true;
+			if(_priv.checkMapBoundaryCollision(x, y)) return true;
+			var currentTile = _digest.map.layout[Math.floor(y/_digest.map.tile_size)][Math.floor(x/_digest.map.tile_size)];
+			for(var i = 0; i < _digest.map.impervious_tiles.length; i++) {
+				if(currentTile == _digest.map.impervious_tiles[i]) return true;
 			}
 			return false;
 		}
