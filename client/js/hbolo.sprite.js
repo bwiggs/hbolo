@@ -10,7 +10,7 @@ hbolo.PlayerSprite = function(data) {
 			velocity = 0.0,
 			acceleration = 0.05,
 			deceleration = 0.08,
-			maxSpeed = 1.8,
+			maxSpeed = 3.8,
 			currentAngle = 0,
 			rotationSpeed = 0.07, // how fast we rotate
 			weaponCooldown = 10,
@@ -62,8 +62,8 @@ hbolo.PlayerSprite = function(data) {
 				posY = undefined;
 			}
 			
-			if(posX === undefined) posX = 400;
-			if(posY === undefined) posY = 20;
+			if(posX === undefined) posX = 600;
+			if(posY === undefined) posY = 450;
 
 			// UPDATE MOVEMENT VELOCITIES
 			// moving forward
@@ -148,13 +148,11 @@ hbolo.PlayerSprite = function(data) {
 			// draw the tank
 			ctx.translate(posX + image.width/2, posY + image.height/2);
 			ctx.rotate(currentAngle);
+      ctx.fillRect(-(image.width/2),-(image.height/2),image.width,image.height);      
 			ctx.drawImage(image, -(image.width/2),-(image.height/2));
 
 			// restore the projection
 			ctx.restore();
-			
-			
-			
 		},
 		getCollisionBoundary: function() {
 			return {

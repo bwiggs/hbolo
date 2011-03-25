@@ -298,6 +298,8 @@ hbolo.EnemySprite = function(data) {
 			// draw the tank
 			ctx.translate(posX + image.width/2, posY + image.height/2);
 			ctx.rotate(Math.deg2rad(currentAngle));
+      ctx.fillStyle = "#f0f";
+      ctx.fillRect(-(image.width/2),-(image.height/2),image.width,image.height);
 			ctx.drawImage(image, -(image.width/2),-(image.height/2));
 
 			// restore the projection

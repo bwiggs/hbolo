@@ -10,6 +10,7 @@ hbolo.MappingSystem = (function() {
 			map,
 			_mapTileDimensions = {},
 			_mapTiles,
+      _imperviousTiles = [],
       mapBoundaries = {
         x:0,
         y:0
@@ -33,16 +34,17 @@ hbolo.MappingSystem = (function() {
 			_mapTiles = new Image();
 			_mapTiles.onload = function() {_priv.buildMap();};
 			_mapTiles.src = _digest.map.file;
+      _imperviousTiles = _digest.map.impervious_tiles;
 		},
-		checkMapBoundaryCollision: function(x, y) {
+		checkMapBoundaryCollision: function(tileX, tileY) {
       // get the current tile for the sprite
-      x = Math.floor(x/_digest.map.tile_size);
-      y = Math.floor(y/_digest.map.tile_size);
+      tileX = Math.floor(tileX/_digest.map.tile_size);
+      tileY = Math.floor(tileY/_digest.map.tile_size);
 
-			if(x < 0 ||
-				 x >= _mapTileDimensions.width-1 ||
-				 y < 0 ||
-				 y >= _mapTileDimensions.height-1) return true;
+			if(tileX < 0 ||
+				 tileX >= _mapTileDimensions.width-1 ||
+				 tileY < 0 ||
+				 tileY >= _mapTileDimensions.height-1) return true;
 		},
 		buildMap: function() {
 			
@@ -97,11 +99,23 @@ hbolo.MappingSystem = (function() {
 			};
 		},
 		checkTileCollision: function(x, y) {
-			if(_priv.checkMapBoundaryCollision(x, y)) return true;
-			var currentTile = _digest.map.layout[Math.floor(y/_digest.map.tile_size)][Math.floor(x/_digest.map.tile_size)];
-			for(var i = 0; i < _digest.map.impervious_tiles.length; i++) {
-				if(currentTile == _digest.map.impervious_tiles[i]) return true;
-			}
+
+      // convert sprite x,y to tile x, y
+      x = Math.floor(x/_digest.map.tile_size);
+      y = Math.floor(y/_digest.map.tile_size);
+
+      // check if we're at the side of the map
+			if(_priv.checkMapBoundaryCollision(x, y)) {
+        return true;
+      };
+      
+      // check if we've hit a tile
+      var currentTile = _digest.map.layout[y][x];
+      for(var i = 0, len = _imperviousTiles.length; i < len; i++) {
+        if(currentTile == _imperviousTiles[i]) {
+          return true;
+        }
+      }
 			return false;
 		}
 	};

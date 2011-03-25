@@ -31,7 +31,7 @@ var game = (function() {
 				imperviousSprites: [],
 				damagingSprites: []
 			};
-			gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
+			//gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
 			//gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
 			//gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
 		},
