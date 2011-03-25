@@ -71,7 +71,7 @@ hbolo.EnemySprite = function(data) {
 
 	switch(data.type) {
 		case "tank":
-			image.src = "/tanks/blue.png";
+			image.src = "/tanks/red.png";
 			break;
 		default:
 			throw "Sprite(): Must provide an asset type.";
