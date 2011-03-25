@@ -281,17 +281,19 @@ hbolo.EnemySprite = function(data) {
 			// ctx.stroke();
 			
 			// DRAW THE A* PATH
-			if(aStarPath.length > 0) {
-				ctx.strokeStyle = "#fff";
-				ctx.beginPath();
-				ctx.moveTo(posX, posY);
-				var point;
-				for(point in aStarPath) {
-					ctx.lineTo(aStarPath[point].x *16 + 8, aStarPath[point].y * 16 + 8);
-				}
-				ctx.stroke();
-				ctx.closePath();
-			}
+      if(hbolo.Settings.showAITrackingPath) {
+        if(aStarPath.length > 0) {
+          ctx.strokeStyle = "#fff";
+          ctx.beginPath();
+          ctx.moveTo(posX, posY);
+          var point;
+          for(point in aStarPath) {
+            ctx.lineTo(aStarPath[point].x *16 + 8, aStarPath[point].y * 16 + 8);
+          }
+          ctx.stroke();
+          ctx.closePath();
+        }
+      }
 			
 			// draw the tank
 			ctx.translate(posX + image.width/2, posY + image.height/2);
@@ -303,25 +305,31 @@ hbolo.EnemySprite = function(data) {
 			
 			
 			// HEALTH BAR
-			var pointBarWidth = 45,
-					life = (health/100);		
-			ctx.fillStyle = "#000";
-			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth, 7);
-			if(life > 0.66) {
-				ctx.fillStyle = '#0f0';
-			} else if(life > 0.33) {
-				ctx.fillStyle = '#ff0';
-			} else {
-				ctx.fillStyle = '#f00';
-			}
-			ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth*life, 7);
+      if(hbolo.Settings.showHealthBars) {
+
+        var pointBarWidth = 45,
+            life = (health/100);		
+
+        ctx.fillStyle = "#000";
+        ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth, 7);
+        if(life > 0.66) {
+          ctx.fillStyle = '#0f0';
+        } else if(life > 0.33) {
+          ctx.fillStyle = '#ff0';
+        } else {
+          ctx.fillStyle = '#f00';
+        }
+        ctx.fillRect (posX+image.width+5, posY-5, pointBarWidth*life, 7);
+      }
 
 			// PLAYER NAME
-			ctx.shadowBlur = 1;
-			ctx.shadowColor = '#000';
-			ctx.fillStyle = "#fff";
-			ctx.font = "bold 10px verdana";
-			ctx.fillText("COMPUTER", posX+image.width+5, posY-8);
+      if(hbolo.Settings.showPlayerNames) {
+        ctx.shadowBlur = 1;
+        ctx.shadowColor = '#000';
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 10px verdana";
+        ctx.fillText("COMPUTER", posX+image.width+5, posY-8);
+      }
 			
 		},
 		getCollisionBoundary: function() {

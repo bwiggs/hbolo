@@ -9,11 +9,13 @@ hbolo.InputManager = function() {
 		right: false,
 		quit: false,
 		fire: false,
-		reset: false
+		reset: false,
+    toggleHealthBars: false,
+    showPlayerNames: false,
+    showAITrackingPath: false
 	};
 	
 	document.onkeydown = function(e) {
-
 		switch(e.keyCode) {
 	
 			// forward
@@ -50,12 +52,12 @@ hbolo.InputManager = function() {
 			case 81:
 				keyStates['quit'] = true;
 				break;
-	
+
 			default:
-				// console.log(e.keyCode);
+				//console.log(e.keyCode);
 		}
 	};
-	
+
 	document.onkeyup = function(e) {
 
 		switch(e.keyCode) {
@@ -89,9 +91,25 @@ hbolo.InputManager = function() {
 			case 82:
 				keyStates['reset'] = false;
 				break;
+
 		}
 	};
 	
+  document.onkeypress = function(e) {
+    switch(e.keyCode) {
+
+      case 116:
+        hbolo.Settings.toggle('showAITrackingPath');
+        break;
+
+      case 108:
+        hbolo.Settings.toggle('showHealthBars');
+        hbolo.Settings.toggle('showPlayerNames');
+        break;
+    }
+
+  };
+
 	return {
 		getKeyStates: (function() { return keyStates; })(),
 	};

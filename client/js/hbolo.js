@@ -1,5 +1,15 @@
 var UPS = 33;
 
+var hbolo = hbolo || {};
+hbolo.Settings = {
+  toggle: function(settingName) {
+    hbolo.Settings[settingName] = !hbolo.Settings[settingName];
+  },
+  togglePlayerNames: false,
+  showHealthBars: false,
+  showAITrackingPath: false
+};
+
 var game = (function() {
 	
 	var ctx,
@@ -36,6 +46,16 @@ var game = (function() {
 				this.end();
 				return;
 			}
+      if(input.getKeyStates.showAITrackingPath) {
+				hbolo.Settings.showAITrackingPath = !hbolo.Settings.showAITrackingPath;
+			}
+      if(input.getKeyStates.showHealthBars) {
+        hbolo.Settings.showHealthBars = !hbolo.Settings.showHealthBars;
+			}
+      if(input.getKeyStates.showPlayerNames) {
+				hbolo.Settings.showPlayerNames = !hbolo.Settings.showPlayerNames;
+			}
+
 			player.update(input);
 
 			for(var i in gameObjects) {
