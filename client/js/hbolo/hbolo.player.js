@@ -14,8 +14,8 @@ hbolo.PlayerSprite = function(data) {
 			currentAngle = 0,
 			rotationSpeed = 0.07, // how fast we rotate
 			weaponCooldown = 10,
-			posX = 600,
-			posY = 450,
+			posX = 100,
+			posY = 250,
 			newPosX,
 			newPosY,
 			collisionRadius = 12,
@@ -143,12 +143,14 @@ hbolo.PlayerSprite = function(data) {
 			ctx.save();
 
 			// draw the collision detection ring
-      ctx.beginPath();
-      ctx.strokeStyle = "#fff";
-      ctx.strokeWidth = 2;
-      ctx.arc(posX+collisionRadius/2, posY+collisionRadius/2, collisionRadius, 0, Math.PI*2, true); 
-      ctx.closePath();
-      ctx.stroke();
+      /*
+       *ctx.beginPath();
+       *ctx.strokeStyle = "#fff";
+       *ctx.strokeWidth = 2;
+       *ctx.arc(posX+collisionRadius/2, posY+collisionRadius/2, collisionRadius, 0, Math.PI*2, true); 
+       *ctx.closePath();
+       *ctx.stroke();
+       */
 
 			
 			// draw the shield detection ring
@@ -162,7 +164,7 @@ hbolo.PlayerSprite = function(data) {
 			ctx.translate(posX + image.width/2, posY + image.height/2);
 			ctx.rotate(currentAngle);
       ctx.fillStyle = "#0F0";
-      ctx.fillRect(-(image.width/2),-(image.height/2),image.width,image.height);
+      //ctx.fillRect(-(image.width/2),-(image.height/2),image.width,image.height);
 			ctx.drawImage(image, -(image.width/2),-(image.height/2));
 
 
@@ -170,12 +172,14 @@ hbolo.PlayerSprite = function(data) {
 			ctx.restore();
       
       // draw the poxX, posY circle
-			ctx.beginPath();
-      ctx.arc(posX, posY, 1, 0, Math.PI * 2, false);
-      ctx.closePath();
-      ctx.strokeWidth = 2;
-      ctx.strokeStyle = "#F00";
-      ctx.stroke();
+      /*
+			 *ctx.beginPath();
+       *ctx.arc(posX, posY, 1, 0, Math.PI * 2, false);
+       *ctx.closePath();
+       *ctx.strokeWidth = 2;
+       *ctx.strokeStyle = "#F00";
+       *ctx.stroke();
+       */
 		},
 		getCollisionBoundary: function() {
 			return {

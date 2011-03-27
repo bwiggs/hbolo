@@ -107,7 +107,7 @@ hbolo.EnemySprite = function(data) {
 			function Node(x, y) {
 				this.x = x;
 				this.y = y;
-			};
+			}
 			
 			Node.prototype.calcCost = function() {
 				this.cost = this.parent.cost + 16 + Math.Pythagoras(this.x*16, this.y*16, prey.x, prey.y);
@@ -183,8 +183,8 @@ hbolo.EnemySprite = function(data) {
 			}
 			
 			var pathNode = aStarPath.shift();
-			pathNode.x = pathNode.x * 16;
-			pathNode.y = pathNode.y * 16;
+			pathNode.x = pathNode.x * 16 || 0;
+			pathNode.y = pathNode.y * 16 || 0;
 			pathNode.bearing = Math.abs(Math.floor(Math.rad2deg(Math.atan((pathNode.y-posY)/(pathNode.x-posX)))));;
 			
 			// top right quadrant
@@ -238,8 +238,8 @@ hbolo.EnemySprite = function(data) {
 				y: game.getPlayer().getPosition().y
 			};
 
-			self.aStarAlgorithm();
-			//PathfindingBehavior.pursue();
+			//self.aStarAlgorithm();
+			//PathfindingBehavior.pursue(prey);
 
 			// update the x,y checking for collisions
       if(!self.getCollisions()) {
@@ -299,7 +299,7 @@ hbolo.EnemySprite = function(data) {
 			ctx.translate(posX + image.width/2, posY + image.height/2);
 			ctx.rotate(Math.deg2rad(currentAngle));
       ctx.fillStyle = "#f0f";
-      ctx.fillRect(-(image.width/2),-(image.height/2),image.width,image.height);
+      //ctx.fillRect(-(image.width/2),-(image.height/2),image.width,image.height);
 			ctx.drawImage(image, -(image.width/2),-(image.height/2));
 
 			// restore the projection

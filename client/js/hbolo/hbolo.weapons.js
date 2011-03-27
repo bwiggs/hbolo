@@ -12,7 +12,7 @@ hbolo.MachineGunSprite = function(data) {
         posY = data.posY,
         lifeTime = 20 + Math.random(15)*15,
         collisionRadius = 2,
-        damagePoints = 0.2;
+        damagePoints = 0.8;
     
     console.log();
     if(data.velocity) velocity+=data.velocity;
@@ -58,7 +58,7 @@ hbolo.FlamethrowerSprite = function(data) {
         lifeTime = 18,
         currentLife = 0,
         radius = 2,
-        damagePoints = 1;
+        damagePoints = 1.0;
 
     if(data.velocity) velocity+=data.velocity;
 
@@ -100,7 +100,6 @@ hbolo.FlamethrowerSprite = function(data) {
             ctx.fill();
         },
         getDamagePoints: function(){
-            game.removeDamagingSprite(this);
             return damagePoints/radius;
         },
         getCollisionBoundary: function() {
