@@ -6,13 +6,15 @@
 hbolo.MachineGunSprite = function(data) {
 
     var velocity = 5,
-        angle = data.angle,
+        offset = Math.deg2rad(Math.floor(Math.random(5)*5)),
+        angle = data.angle + offset,
         posX = data.posX,
         posY = data.posY,
-        lifeTime = 30,
+        lifeTime = 20 + Math.random(15)*15,
         collisionRadius = 2,
         damagePoints = 0.2;
     
+    console.log();
     if(data.velocity) velocity+=data.velocity;
 
     return {
@@ -37,6 +39,7 @@ hbolo.MachineGunSprite = function(data) {
             };
         },
         getDamagePoints: function(){
+            game.removeDamagingSprite(this);
             return damagePoints;
         }
     };
@@ -97,6 +100,7 @@ hbolo.FlamethrowerSprite = function(data) {
             ctx.fill();
         },
         getDamagePoints: function(){
+            game.removeDamagingSprite(this);
             return damagePoints/radius;
         },
         getCollisionBoundary: function() {
