@@ -42,10 +42,13 @@ var game = (function() {
 			}
 		},
 		update: function() {
+
 			if(input.getKeyStates.quit) {
 				this.end();
 				return;
 			}
+
+      // toggle overlay display settings
       if(input.getKeyStates.showAITrackingPath) {
 				hbolo.Settings.showAITrackingPath = !hbolo.Settings.showAITrackingPath;
 			}

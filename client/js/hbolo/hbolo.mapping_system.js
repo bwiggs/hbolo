@@ -37,14 +37,10 @@ hbolo.MappingSystem = (function() {
       _imperviousTiles = _digest.map.impervious_tiles;
 		},
 		checkMapBoundaryCollision: function(tileX, tileY) {
-      // get the current tile for the sprite
-      tileX = Math.floor(tileX/_digest.map.tile_size);
-      tileY = Math.floor(tileY/_digest.map.tile_size);
-
-			if(tileX < 0 ||
-				 tileX >= _mapTileDimensions.width-1 ||
-				 tileY < 0 ||
-				 tileY >= _mapTileDimensions.height-1) return true;
+			if(tileX < 0 || tileX >= _mapTileDimensions.width ||
+				 tileY < 0 || tileY >= _mapTileDimensions.height) {
+        return true;
+      }
 		},
 		buildMap: function() {
 			
@@ -101,16 +97,16 @@ hbolo.MappingSystem = (function() {
 		checkTileCollision: function(x, y) {
 
       // convert sprite x,y to tile x, y
-      x = Math.floor(x/_digest.map.tile_size);
-      y = Math.floor(y/_digest.map.tile_size);
+      var tileX = Math.floor(x/_digest.map.tile_size),
+          tileY = Math.floor(y/_digest.map.tile_size);
 
       // check if we're at the side of the map
-			if(_priv.checkMapBoundaryCollision(x, y)) {
+			if(_priv.checkMapBoundaryCollision(tileX, tileY)) {
         return true;
-      };
+      }
       
       // check if we've hit a tile
-      var currentTile = _digest.map.layout[y][x];
+      var currentTile = _digest.map.layout[tileY][tileX];
       for(var i = 0, len = _imperviousTiles.length; i < len; i++) {
         if(currentTile == _imperviousTiles[i]) {
           return true;
