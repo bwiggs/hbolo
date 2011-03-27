@@ -20,16 +20,23 @@ Math.Pythagoras = function(x1, y1, x2, y2) {
 // VECTOR
 //=============================================================================
 
-var Vector = Vector || {};
+var Vector = function() {
+  
+};
 
-Vector.rotate2d = function(v1, v2) {};
+Vector.prototype.add = function() {
+  
+};
 
 //=============================================================================
 // PHYSICS
 //=============================================================================
 
-var Physics = Physics || {};
-
-Physics.collision = function(a, b) {
-	return ((a.r + b.r) > Math.Pythagoras(a.x,a.y,b.x,b.y));
+var Physics = Physics || {
+  collision: function() {
+    return ((a.r + b.r) > Math.Pythagoras(a.x,a.y,b.x,b.y));
+  },
+  isPolyCollision: function() {
+    return false;
+  }
 };
