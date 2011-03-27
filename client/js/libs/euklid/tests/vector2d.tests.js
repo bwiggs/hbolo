@@ -55,3 +55,21 @@ test('divide()', function() {
   v.divide(w);
   deepEqual(v.toObject(), {x:2, y:3}, 'Dividing two vectors');
 });
+
+test('dot()', function() {
+  var v = new Vector2d(2, 5),
+      w = new Vector2d(-3, 2),
+      dotProduct = v.dot(w);
+
+  equal(dotProduct, 4, 'Get the dot product of two vectors');
+
+});
+
+test('angle()', function() {
+  var v = new Vector2d(5, 2),
+      w = new Vector2d(-3, 1),
+      theta = v.angle(w);
+
+  equal(theta.toFixed(5),2.43934, 'Find the angle using the dot product' );
+  
+});

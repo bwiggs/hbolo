@@ -40,5 +40,11 @@ Vector2d.prototype = {
   divide: function(v) {
     this.x /= v.x;
     this.y /= v.y;
+  },
+  angle: function(v) {
+    return Math.acos(this.dot(v)/(this.length() * v.length()));
+  },
+  dot: function(v) {
+    return (this.x * v.x) + (this.y * v.y);
   }
 };
