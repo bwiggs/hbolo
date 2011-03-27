@@ -12,7 +12,7 @@ hbolo.MachineGunSprite = function(data) {
         posY = data.posY,
         lifeTime = 20 + Math.random(15)*15,
         collisionRadius = 2,
-        damagePoints = 0.8;
+        damagePoints = 0.5;
     
     console.log();
     if(data.velocity) velocity+=data.velocity;
@@ -27,7 +27,7 @@ hbolo.MachineGunSprite = function(data) {
         draw: function(ctx) {
             ctx.beginPath();
             ctx.fillStyle = "#fff";
-            ctx.arc(posX+8, posY, 2, 0, Math.PI*2, true);
+            ctx.arc(posX+8, posY, 1, 0, Math.PI*2, true);
             ctx.closePath();
             ctx.fill();
         },
