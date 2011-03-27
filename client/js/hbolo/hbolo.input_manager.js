@@ -12,7 +12,8 @@ hbolo.InputManager = function() {
 		reset: false,
     toggleHealthBars: false,
     showPlayerNames: false,
-    showAITrackingPath: false
+    showAITrackingPath: false,
+    changeWeapon: false
 	};
 	
 	document.onkeydown = function(e) {
@@ -106,12 +107,20 @@ hbolo.InputManager = function() {
         hbolo.Settings.toggle('showHealthBars');
         hbolo.Settings.toggle('showPlayerNames');
         break;
+      
+      case 101:
+        hbolo.Events.publish('/player/nextweapon');
+        break; 
+
+      default:
+        //console.log(e.keyCode);
+        break;
     }
 
   };
 
 	return {
-		getKeyStates: (function() { return keyStates; })(),
+		getKeyStates: (function() { return keyStates; })()
 	};
 	
 };

@@ -19,7 +19,12 @@ hbolo.PlayerSprite = function(data) {
 			newPosX,
 			newPosY,
 			collisionRadius = 12,
-			shieldRadius = 14;
+			shieldRadius = 14,
+      _currWeapon = 0,
+      _weapons = [
+        hbolo.MachineGunSprite,
+        hbolo.FlamethrowerSprite
+      ];
 
 	switch(data.type) {
 		case "tank":
@@ -28,6 +33,11 @@ hbolo.PlayerSprite = function(data) {
 		default:
 			throw "Sprite(): Must provide an asset type.";
 	}
+
+  hbolo.Events.subscribe('/player/nextweapon', function(){
+    if(_currWeapon == _weapons.length-1) _currWeapon = 0;
+    else _currWeapon++;
+  });
 	
 	var self = {
 		getCollisions: function(self){
@@ -115,9 +125,10 @@ hbolo.PlayerSprite = function(data) {
 			}
 			
 			if(input.getKeyStates.fire) {
-				if(weaponCooldown == 0) {
+				if(weaponCooldown === 0) {
 					weaponCooldown = 0;
-					game.addDamagingSprite(new hbolo.FlamethrowerSprite({
+					game.addDamagingSprite(new _weapons[_currWeapon]({
+            velocity: velocity,
 						angle:currentAngle,
 						posX: posX,
 						posY: posY
