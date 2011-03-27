@@ -1,0 +1,6 @@
+[submodule "client/tests/qunit"]
+	path = client/tests/qunit
+	url = https://github.com/jquery/qunit.git
+[submodule "client/js/libs/qunit"]
+	path = client/js/libs/qunit
+	url = https://github.com/jquery/qunit.git
