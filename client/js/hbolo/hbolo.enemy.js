@@ -286,8 +286,7 @@ hbolo.EnemySprite = function(data) {
           ctx.strokeStyle = "#fff";
           ctx.beginPath();
           ctx.moveTo(posX, posY);
-          var point;
-          for(point in aStarPath) {
+          for(var point in aStarPath) {
             ctx.lineTo(aStarPath[point].x *16 + 8, aStarPath[point].y * 16 + 8);
           }
           ctx.stroke();

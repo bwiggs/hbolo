@@ -32,7 +32,8 @@ var game = (function() {
 				damagingSprites: []
 			};
 			gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
-			//gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
+      game.addImperviousSprite(new hbolo.PillBoxSprite({posX:285,posY:53}));
+      //gameObjects.imperviousSprites.push(new hbolo.PillBoxSprite({posX:300,posY:300}));
 			//gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
 		},
 		loop: function() {
@@ -93,7 +94,7 @@ var game = (function() {
 			}
 		},
 		addImperviousSprite: function(object) {
-			gameObjects.damagingSprites.push(object);
+			gameObjects.imperviousSprites.push(object);
 		},
 		removeImperviousSprite: function(object) {
 			var idx = gameObjects.imperviousSprites.indexOf(object);

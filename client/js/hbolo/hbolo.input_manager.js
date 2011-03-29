@@ -112,6 +112,10 @@ hbolo.InputManager = function() {
         hbolo.Events.publish('/player/nextweapon');
         break; 
 
+      case 112:
+        hbolo.Events.publish('/player/dropPillbox');
+        break;
+
       default:
         //console.log(e.keyCode);
         break;

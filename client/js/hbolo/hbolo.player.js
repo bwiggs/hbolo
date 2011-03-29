@@ -38,6 +38,10 @@ hbolo.PlayerSprite = function(data) {
     if(_currWeapon == _weapons.length-1) _currWeapon = 0;
     else _currWeapon++;
   });
+
+  hbolo.Events.subscribe('/player/dropPillbox', function(){
+      game.addImperviousSprite(new hbolo.PillBoxSprite({posX:posX+10,posY:posY-25}));
+  });
 	
 	var self = {
 		getCollisions: function(self){
@@ -180,6 +184,14 @@ hbolo.PlayerSprite = function(data) {
        *ctx.strokeStyle = "#F00";
        *ctx.stroke();
        */
+
+        // show x,y position
+        ctx.shadowBlur = 1;
+        ctx.shadowColor = '#000';
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 10px verdana";
+        ctx.fillText(Math.floor(posX)+","+Math.floor(posY), posX+5, posY-8);
+
 		},
 		getCollisionBoundary: function() {
 			return {

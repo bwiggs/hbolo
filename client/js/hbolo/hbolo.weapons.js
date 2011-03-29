@@ -5,42 +5,41 @@
 
 hbolo.MachineGunSprite = function(data) {
 
-    var velocity = 5,
+    var _velocity = 5,
         offset = Math.deg2rad(Math.floor(Math.random(5)*5)),
         angle = data.angle + offset,
         posX = data.posX,
         posY = data.posY,
         lifeTime = 20 + Math.random(15)*15,
-        collisionRadius = 2,
-        damagePoints = 0.5;
+        _shellRadius = data.shellRadius || 1,
+        _damagePoints = data.damagePoints || 0.5;
     
-    console.log();
-    if(data.velocity) velocity+=data.velocity;
+    if(data.velocity) _velocity+=data.velocity;
 
     return {
         update: function(input) {
-            posX += Math.sin(angle) * velocity;
-            posY -= Math.cos(angle) * velocity;
+            posX += Math.sin(angle) * _velocity;
+            posY -= Math.cos(angle) * _velocity;
             lifeTime--;
             if(lifeTime <= 0) game.removeDamagingSprite(this); 
         },
         draw: function(ctx) {
             ctx.beginPath();
             ctx.fillStyle = "#fff";
-            ctx.arc(posX+8, posY, 1, 0, Math.PI*2, true);
+            ctx.arc(posX+8, posY, _shellRadius, 0, Math.PI*2, true);
             ctx.closePath();
             ctx.fill();
         },
         getCollisionBoundary: function() {
             return {
-                r: collisionRadius,
+                r: _shellRadius,
                 x: posX,
                 y: posY
             };
         },
         getDamagePoints: function(){
             game.removeDamagingSprite(this);
-            return damagePoints;
+            return _damagePoints;
         }
     };
 };
@@ -121,24 +120,97 @@ hbolo.FlamethrowerSprite = function(data) {
 hbolo.PillBoxSprite = function(data) {
 
     var angle = 0,
-            radius = 10,
-            posX = data.posX,
-            posY = data.posY,
-            health = 100;
+        radius = 10,
+        posX = data.posX,
+        posY = data.posY,
+        health = 400,
+        detectionRadius = 75,
+        _mode = 'scanning',
+        _bogeys = [];
 
-    return {
+
+    var pub =  {
         update: function(input) {
-            if(health <= 0) game.removeGameObject(this); 
+          if(health <= 0) game.removeGameObject(this); 
+          if(angle >= 360) angle=0;
+          else angle+=1;
+
+          if(pub.getDetections()) {
+            _mode = 'attacking';
+          } else {
+            _mode = 'scanning';
+            _bogeys = [];
+          }
+
+        },
+        getDetections: function(){
+          var detections = false;
+          for(var i in game.getGameObjects().imperviousSprites) {
+            var object = game.getGameObjects().imperviousSprites[i];
+            if(pub !== object) {
+              // check for some sort of collision
+              var target = object.getCollisionBoundary();
+              if(Physics.collision({ r: detectionRadius, x: posX, y: posY }, target)) {
+                detections = true;
+                game.addDamagingSprite(new hbolo.MachineGunSprite({
+                  angle:Math.sin((posX - target.x) / (posY - target.y )),
+                  posX: posX-8,
+                  posY: posY,
+                  damagePoints: 1,
+                  shellRadius: 2
+                }));
+              }
+            }
+          }
+          return detections;
         },
         draw: function(ctx) {
             // TODO: add a rotating turrets
-            canvas2d.globalCompositeOperation = "lighter";
+
+            // draw the radar detection ring
+            switch(_mode) {
+              case 'attacking':
+                ctx.fillStyle = "rgba(255,0,0,.1)";
+                ctx.strokeStyle = "rgb(255,0,0)";
+                break;
+              default:
+                ctx.fillStyle = "rgba(0,255,0,.1)";
+                ctx.strokeStyle = "rgb(0,255,0)";
+                break;
+            }
+
+            ctx.beginPath();
+            ctx.strokeWidth = "1";
+            ctx.arc(posX, posY, detectionRadius, 0, Math.PI*2, true); 
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // draw the turret
             ctx.beginPath();
             ctx.fillStyle = "#ccc";
             ctx.arc(posX, posY, radius, 0, Math.PI*2, true); 
             ctx.closePath();
             ctx.fill();
+
+            // draw the radar beam
+            ctx.beginPath();
+            ctx.moveTo(posX, posY);
+            ctx.lineTo(posX+Math.cos(Math.deg2rad(angle))*detectionRadius, posY+Math.sin(Math.deg2rad(angle))*detectionRadius);
+            ctx.closePath();
+            ctx.stroke();
+
+        },
+        getCollisionBoundary: function() {
+            return {
+                r: radius,
+                x: posX,
+                y: posY
+            };
         }
     };
+
+    return pub;
+
 };
 
