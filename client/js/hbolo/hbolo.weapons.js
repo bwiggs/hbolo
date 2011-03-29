@@ -125,8 +125,7 @@ hbolo.PillBoxSprite = function(data) {
         posY = data.posY,
         health = 400,
         detectionRadius = 75,
-        _mode = 'scanning',
-        _bogeys = [];
+        _mode = 'scanning';
 
 
     var pub =  {
@@ -139,7 +138,6 @@ hbolo.PillBoxSprite = function(data) {
             _mode = 'attacking';
           } else {
             _mode = 'scanning';
-            _bogeys = [];
           }
 
         },
@@ -152,17 +150,36 @@ hbolo.PillBoxSprite = function(data) {
               var target = object.getCollisionBoundary();
               if(Physics.collision({ r: detectionRadius, x: posX, y: posY }, target)) {
                 detections = true;
-                game.addDamagingSprite(new hbolo.MachineGunSprite({
-                  angle:Math.sin((posX - target.x) / (posY - target.y )),
-                  posX: posX-8,
-                  posY: posY,
-                  damagePoints: 1,
-                  shellRadius: 2
-                }));
+                pub.fireWeapon(target);
               }
             }
           }
           return detections;
+        },
+        fireWeapon: function(target) {
+          var targetAngle = Math.rad2deg(Math.atan((target.y - posY)/(target.x - posX) ));
+
+          // top right quadrant
+          if(target.x > posX && target.y < posY) {
+            targetAngle = 90 - targetAngle;
+          // bottom right quadrant
+          } else if(target.x > posX && target.y > posY) {
+            targetAngle += 90;
+          // bottom left quadrant
+          }	else if(target.x < posX && target.y > posY) {
+            targetAngle = 270 - targetAngle;
+          // top left quadrant
+          } else if(target.x < posX && target.y < posY) {
+            targetAngle = 270 + targetAngle;
+          }
+
+          game.addDamagingSprite(new hbolo.MachineGunSprite({
+            angle:Math.deg2rad(targetAngle),
+            posX: posX-8,
+            posY: posY,
+            damagePoints: 1,
+            shellRadius: 2
+          }));
         },
         draw: function(ctx) {
             // TODO: add a rotating turrets

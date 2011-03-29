@@ -185,7 +185,7 @@ hbolo.EnemySprite = function(data) {
 			var pathNode = aStarPath.shift();
 			pathNode.x = pathNode.x * 16 || 0;
 			pathNode.y = pathNode.y * 16 || 0;
-			pathNode.bearing = Math.abs(Math.floor(Math.rad2deg(Math.atan((pathNode.y-posY)/(pathNode.x-posX)))));;
+			pathNode.bearing = Math.abs(Math.floor(Math.rad2deg(Math.atan((pathNode.y-posY)/(pathNode.x-posX)))));
 			
 			// top right quadrant
 			if(pathNode.x > posX && pathNode.y < posY) {
