@@ -173,6 +173,8 @@ hbolo.PillBoxSprite = function(data) {
             targetAngle = 270 + targetAngle;
           }
 
+          //targetAngle = 90;
+
           game.addDamagingSprite(new hbolo.MachineGunSprite({
             angle:Math.deg2rad(targetAngle),
             posX: posX-8,
