@@ -32,7 +32,7 @@ var game = (function() {
 				damagingSprites: []
 			};
 			gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
-      game.addImperviousSprite(new hbolo.PillBoxSprite({posX:285,posY:53}));
+      //game.addImperviousSprite(new hbolo.PillBoxSprite({posX:285,posY:53}));
       //gameObjects.imperviousSprites.push(new hbolo.PillBoxSprite({posX:300,posY:300}));
 			//gameObjects.imperviousSprites.push(new hbolo.EnemySprite({type:"tank"}));
 		},

@@ -238,7 +238,7 @@ hbolo.EnemySprite = function(data) {
 				y: game.getPlayer().getPosition().y
 			};
 
-			//self.aStarAlgorithm();
+			self.aStarAlgorithm();
 			//PathfindingBehavior.pursue(prey);
 
 			// update the x,y checking for collisions

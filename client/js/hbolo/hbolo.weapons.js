@@ -10,7 +10,7 @@ hbolo.MachineGunSprite = function(data) {
         angle = data.angle + offset,
         posX = data.posX,
         posY = data.posY,
-        lifeTime = 20 + Math.random(15)*15,
+        lifeTime = 20 + Math.random(5)*5,
         _shellRadius = data.shellRadius || 1,
         _damagePoints = data.damagePoints || 0.5;
     
@@ -161,7 +161,7 @@ hbolo.PillBoxSprite = function(data) {
 
           // top right quadrant
           if(target.x > posX && target.y < posY) {
-            targetAngle = 90 - targetAngle;
+            targetAngle = 90 + targetAngle;
           // bottom right quadrant
           } else if(target.x > posX && target.y > posY) {
             targetAngle += 90;
