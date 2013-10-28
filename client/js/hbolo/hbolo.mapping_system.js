@@ -29,7 +29,7 @@ hbolo.MappingSystem = (function() {
 			});
 		},
 		buildDigest: function(json) {
-			_digest = eval('(' + json + ')');
+			_digest = json;
 			_digest.map.file = _path + "map.png";
 			_mapTiles = new Image();
 			_mapTiles.onload = function() {_priv.buildMap();};
